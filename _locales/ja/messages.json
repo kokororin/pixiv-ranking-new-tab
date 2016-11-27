@@ -1,0 +1,17 @@
+{
+  "appName": {
+    "message": "Pixiv Ranking New Tab"
+  },
+  "description": {
+    "message": "新しいタブページでPixivの毎日のランキングを表示します。"
+  },
+  "history": {
+    "message": "閲覧履歴"
+  },
+  "bookmarks": {
+    "message": "ブックマーク"
+  },
+  "apps": {
+    "message": "アプリ"
+  }
+}

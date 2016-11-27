@@ -1,0 +1,17 @@
+{
+  "appName": {
+    "message": "Pixiv Ranking New Tab"
+  },
+  "description": {
+    "message": "Show Pixiv daily rankings on your new tab page."
+  },
+  "history": {
+    "message": "History"
+  },
+  "bookmarks": {
+    "message": "Bookmarks"
+  },
+  "apps": {
+    "message": "Apps"
+  }
+}

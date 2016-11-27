@@ -1,0 +1,19 @@
+{
+  "chrome_url_overrides": {
+    "newtab": "main.html"
+  },
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com 'unsafe-eval'; object-src 'self'",
+  "description": "__MSG_description__",
+  "icons": {
+    "128": "logo-128.png",
+    "16": "logo-16.png",
+    "48": "logo-48.png"
+  },
+  "manifest_version": 2,
+  "name": "__MSG_appName__",
+  "permissions": [
+    "https://api.pixiv.moe/"
+  ],
+  "default_locale": "en",
+  "version": "0.1.1"
+}

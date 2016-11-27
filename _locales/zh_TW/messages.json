@@ -1,0 +1,17 @@
+{
+  "appName": {
+    "message": "Pixiv Ranking New Tab"
+  },
+  "description": {
+    "message": "在新標籤頁上顯示Pixiv每日排名。"
+  },
+  "history": {
+    "message": "歷史記錄"
+  },
+  "bookmarks": {
+    "message": "書籤"
+  },
+  "apps": {
+    "message": "應用"
+  }
+}
