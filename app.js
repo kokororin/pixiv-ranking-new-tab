@@ -71,6 +71,11 @@ var App = (function() {
         request.open('GET', 'https://api.pixiv.moe/v1/ranking', true);
         request.onload = function() {
           this.processResponse(request);
+          this.showNotification({
+            title: chrome.i18n.getMessage('appName'),
+            message: chrome.i18n.getMessage('updated'),
+            iconUrl: 'logo-128.png'
+          });
         }.bind(this);
         request.onerror = this.showError;
         request.send();
@@ -139,6 +144,21 @@ var App = (function() {
         localStorage.removeItem('ranking:date');
         window.location.reload();
       });
+    },
+
+    showNotification: function(opt, time) {
+      if (typeof time === 'undefined') {
+        time = 5000;
+      }
+      opt.type = opt.type || 'basic';
+      chrome.notifications.clear('notifyId');
+      var notification = chrome.notifications.create('notifyId', opt, function(notifyId) {
+        return notifyId;
+      });
+      setTimeout(function() {
+        chrome.notifications.clear('notifyId');
+      }, time);
+      return notification;
     },
 
     processResponse: function(o) {

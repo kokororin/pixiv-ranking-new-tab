@@ -5,6 +5,9 @@
   "description": {
     "message": "Show Pixiv daily rankings on your new tab page."
   },
+  "updated": {
+    "message": "Ranking has updated! There are many excellent works!"
+  },
   "history": {
     "message": "History"
   },

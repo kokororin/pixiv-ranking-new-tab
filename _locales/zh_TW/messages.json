@@ -5,6 +5,9 @@
   "description": {
     "message": "在新標籤頁上顯示Pixiv每日排名。"
   },
+  "updated": {
+    "message": "更新了排行榜！有很多優秀作品！"
+  },
   "history": {
     "message": "歷史記錄"
   },

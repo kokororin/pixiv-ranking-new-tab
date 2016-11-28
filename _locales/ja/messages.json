@@ -5,6 +5,9 @@
   "description": {
     "message": "新しいタブページでPixivの毎日のランキングを表示します。"
   },
+  "updated": {
+    "message": "ランキングが更新されました！ 多くの優れた作品があります！"
+  },
   "history": {
     "message": "閲覧履歴"
   },
