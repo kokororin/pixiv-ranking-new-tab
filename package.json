@@ -1,7 +1,7 @@
 {
   "name": "pixiv-ranking-new-tab",
-  "version": "0.1.2",
-  "description": "",
+  "version": "0.2.1",
+  "description": "Show Pixiv daily rankings on your new tab page.  ",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
