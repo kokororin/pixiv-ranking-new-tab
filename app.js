@@ -46,6 +46,16 @@ var App = React.createClass({
     };
   },
 
+  componentWillMount: function() {
+    var manifest = chrome.runtime.getManifest();
+    var previousVersion = localStorage.getItem('version');
+    if (previousVersion !== manifest.version) {
+      localStorage.removeItem('ranking');
+      localStorage.removeItem('ranking:date');
+      localStorage.setItem('version', manifest.version);
+    }
+  },
+
   componentDidMount: function() {
     var data = localStorage.getItem('ranking');
     var cachedDate = localStorage.getItem('ranking:date');
@@ -111,11 +121,8 @@ var App = React.createClass({
   carousel: function() {
     var works = this.state.response.works;
     var val = works[this.state.index];
-    var cachedDate = localStorage.getItem('ranking:date');
-    cachedDate = moment(cachedDate, 'YYYY-MM-DD').format('YYYYMMDD');
-    // avoid 304 cache
 
-    document.body.style.backgroundImage = 'url(https://api.pixiv.moe/v1/ranking/' + val.rank + '?v=' + cachedDate + ')';
+    document.body.style.backgroundImage = 'url(' + val.work.image_urls.large + ')';
     var footerWidth = this.footerRef.offsetWidth;
     var rankWidth = this.rankRef.offsetWidth;
     var cutLength = Math.ceil((Math.ceil((footerWidth - rankWidth) / 40) * 1.3));
