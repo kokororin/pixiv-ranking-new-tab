@@ -26,6 +26,7 @@ var App = React.createClass({
   config: {
     interValTime: 6500,
     tokyoTimeZone: 'Asia/Tokyo',
+    rankingAPI: 'https://api.pixiv.moe/v1/ranking',
     menuItems: [{
       i18nString: 'history',
       url: 'chrome://history'
@@ -42,7 +43,8 @@ var App = React.createClass({
     return {
       response: null,
       index: 0,
-      item: {}
+      item: {},
+      progressPercent: 0
     };
   },
 
@@ -79,7 +81,7 @@ var App = React.createClass({
 
     if (shouldUpdate) {
       var request = new XMLHttpRequest();
-      request.open('GET', 'https://api.pixiv.moe/v1/ranking', true);
+      request.open('GET', this.config.rankingAPI, true);
       request.onload = function() {
         this.processResponse(request);
         this.showNotification({
@@ -144,6 +146,20 @@ var App = React.createClass({
         className: 'compare'
       }, icon));
     }
+
+    var startTime = new Date().getTime();
+    if (typeof this.progressTimer !== 'undefined') {
+      clearInterval(this.progressTimer);
+    }
+
+    this.progressTimer = setInterval(function() {
+      var nowTime = new Date().getTime();
+      var eclipseTime = nowTime - startTime;
+      var progressPercent = eclipseTime / this.config.interValTime * 100;
+      this.setState({
+        progressPercent: progressPercent
+      });
+    }.bind(this), 100);
 
     this.setState({
       index: this.state.index >= (works.length - 1) ? 0 : (this.state.index + 1)
@@ -267,7 +283,10 @@ var App = React.createClass({
           onClick: this.onChromeLinkClick
         }, chrome.i18n.getMessage(elem.i18nString))
       );
-    }.bind(this))))), React.createElement('footer', {
+    }.bind(this))))), React.createElement(Progress, {
+      speed: 0.05,
+      percent: this.state.progressPercent
+    }), React.createElement('footer', {
       ref: function(ref) {
         this.footerRef = ref;
       }.bind(this),
