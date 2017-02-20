@@ -16,5 +16,8 @@
   },
   "apps": {
     "message": "应用"
+  },
+  "update": {
+    "message": "更新"
   }
 }

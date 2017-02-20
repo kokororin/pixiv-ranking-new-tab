@@ -16,5 +16,8 @@
   },
   "apps": {
     "message": "Apps"
+  },
+  "update": {
+    "message": "Update"
   }
 }

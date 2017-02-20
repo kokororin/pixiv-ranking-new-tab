@@ -28,14 +28,25 @@ var App = React.createClass({
     tokyoTimeZone: 'Asia/Tokyo',
     rankingAPI: 'https://api.pixiv.moe/v1/ranking',
     menuItems: [{
+      i18nString: 'update',
+      onClick: function() {
+        this.onUpdateClick();
+      }
+    }, {
       i18nString: 'history',
-      url: 'chrome://history'
+      onClick: function() {
+        this.openChromeLink('chrome://history')
+      }
     }, {
       i18nString: 'bookmarks',
-      url: 'chrome://bookmarks'
+      onClick: function() {
+        this.openChromeLink('chrome://bookmarks')
+      }
     }, {
       i18nString: 'apps',
-      url: 'chrome://apps'
+      onClick: function() {
+        this.openChromeLink('chrome://apps')
+      }
     }]
   },
 
@@ -166,11 +177,16 @@ var App = React.createClass({
     });
   },
 
-  onChromeLinkClick: function(event) {
-    var target = event.nativeEvent.target;
+  openChromeLink: function(url) {
     chrome.tabs.update({
-      url: target.dataset.url
+      url: url
     });
+  },
+
+  onUpdateClick: function() {
+    localStorage.removeItem('ranking');
+    localStorage.removeItem('ranking:date');
+    window.location.reload();
   },
 
   showNotification: function(opt, time) {
@@ -278,9 +294,8 @@ var App = React.createClass({
     }, this.config.menuItems.map(function(elem) {
       return React.createElement(
         'li', null, React.createElement('a', {
-          'data-url': elem.url,
           href: '#',
-          onClick: this.onChromeLinkClick
+          onClick: elem.onClick.bind(this)
         }, chrome.i18n.getMessage(elem.i18nString))
       );
     }.bind(this))))), React.createElement(Progress, {
@@ -293,8 +308,7 @@ var App = React.createClass({
       className: 'footer'
     }, React.createElement('div', {
       className: 'title'
-    }, this.renderTitleContent()), this.renderRankContent())
-    );
+    }, this.renderTitleContent()), this.renderRankContent()));
   }
 
 });
