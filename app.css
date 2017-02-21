@@ -1,6 +1,6 @@
 /*The MIT License (MIT)
 
-Copyright (c) 2016 Kokororin (https://kotori.love)
+Copyright (c) 2017 Kokororin (https://kotori.love)
 
 Permission is hereby granted, free of charge, to any person obtaining a 
 copy of this software and associated documentation files (the "Software"),
@@ -95,7 +95,12 @@ a:hover {
 .nav {
     margin-bottom: 0;
     padding-left: 0;
-    list-style: none
+    list-style: none;
+    background-color: rgba(105, 105, 105, 0.55);
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -0-border-radius: 5px;
 }
 
 .nav>li {
