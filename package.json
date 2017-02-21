@@ -1,10 +1,7 @@
 {
   "name": "pixiv-ranking-new-tab",
-  "version": "0.2.3",
-  "description": "Show Pixiv daily rankings on your new tab page.  ",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "version": "0.2.4",
+  "description": "Show Pixiv daily rankings on your new tab page.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kokororin/pixiv-ranking-new-tab.git"
