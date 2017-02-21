@@ -19,5 +19,8 @@
   },
   "update": {
     "message": "更新"
+  },
+  "newTab": {
+    "message": "新しいタブ"
   }
 }

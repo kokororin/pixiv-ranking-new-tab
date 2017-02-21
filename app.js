@@ -60,6 +60,7 @@ var App = React.createClass({
   },
 
   componentWillMount: function() {
+    document.title = chrome.i18n.getMessage('newTab');
     var manifest = chrome.runtime.getManifest();
     var previousVersion = localStorage.getItem('version');
     if (previousVersion !== manifest.version) {

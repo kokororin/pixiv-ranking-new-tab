@@ -9,12 +9,19 @@
     "16": "logo-16.png",
     "48": "logo-48.png"
   },
+  "browser_action": {
+    "default_icon": "logo-48.png"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
   "manifest_version": 2,
   "name": "__MSG_appName__",
   "permissions": [
+    "tabs",
     "notifications",
     "https://api.pixiv.moe/"
   ],
   "default_locale": "en",
-  "version": "0.3.1"
+  "version": "0.3.2"
 }
