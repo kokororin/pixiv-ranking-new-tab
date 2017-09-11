@@ -13,7 +13,7 @@
     "default_icon": "logo-48.png"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["bg.js"]
   },
   "manifest_version": 2,
   "name": "__MSG_appName__",
@@ -23,5 +23,5 @@
     "https://api.pixiv.moe/"
   ],
   "default_locale": "en",
-  "version": "0.3.2"
+  "version": "0.4.1"
 }

@@ -1,6 +1,6 @@
 {
   "name": "pixiv-ranking-new-tab",
-  "version": "0.3.2",
+  "version": "0.4.1",
   "description": "Show Pixiv daily rankings on your new tab page.",
   "repository": {
     "type": "git",
@@ -15,5 +15,35 @@
   "bugs": {
     "url": "https://github.com/kokororin/pixiv-ranking-new-tab/issues"
   },
-  "homepage": "https://github.com/kokororin/pixiv-ranking-new-tab#readme"
+  "homepage": "https://github.com/kokororin/pixiv-ranking-new-tab#readme",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --progress",
+    "lint": "eslint ./src",
+    "start": "cross-env NODE_ENV=development webpack --watch"
+  },
+  "dependencies": {
+    "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-progress": "^0.0.12"
+  },
+  "devDependencies": {
+    "archiver": "^2.0.3",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.16",
+    "copy-webpack-plugin": "^4.0.1",
+    "cross-env": "^5.0.5",
+    "css-loader": "^0.28.7",
+    "eslint": "^4.6.1",
+    "eslint-config-kotori": "^0.1.3",
+    "eslint-plugin-react": "^7.3.0",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.5.6"
+  }
 }
