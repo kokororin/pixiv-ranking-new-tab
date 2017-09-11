@@ -18,7 +18,7 @@
   "homepage": "https://github.com/kokororin/pixiv-ranking-new-tab#readme",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --progress",
-    "lint": "eslint ./src",
+    "lint": "eslint ./source",
     "start": "cross-env NODE_ENV=development webpack --watch"
   },
   "dependencies": {
