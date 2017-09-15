@@ -1,10 +1,7 @@
 import React from 'react';
-import moment from 'moment';
-import momentLocale from 'moment/locale/ja';
-import 'moment-timezone';
 import Progress from 'react-progress';
 
-moment.updateLocale('ja', momentLocale);
+import { fetchRanking } from '../utils';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -24,52 +21,20 @@ export default class App extends React.Component {
     const previousVersion = localStorage.getItem('version');
     if (previousVersion !== manifest.version) {
       localStorage.removeItem('ranking');
-      localStorage.removeItem('ranking:date');
       localStorage.setItem('version', manifest.version);
     }
   }
 
   componentDidMount() {
     const data = localStorage.getItem('ranking');
-    const cachedDate = localStorage.getItem('ranking:date');
-    const tokyoDate = moment()
-      .tz(this.config.tokyoTimeZone)
-      .format('YYYY-MM-DD'); // 2016-11-28
-    let updateDate = tokyoDate + 'T12:30:00+09:00'; // 2016-11-28T12:30:00+09:00
-    updateDate = moment(updateDate).tz(this.config.tokyoTimeZone);
-    const nowDate = moment().tz(this.config.tokyoTimeZone);
-    let shouldUpdate = false;
-
-    if (data === null && cachedDate === null) {
-      shouldUpdate = true;
-    } else {
-      if (
-        cachedDate ===
-        moment(tokyoDate, 'YYYY-MM-DD')
-          .add('-1', 'days')
-          .format('YYYY-MM-DD')
-      ) {
-        shouldUpdate = false;
-      } else if (nowDate.isAfter(updateDate)) {
-        shouldUpdate = true;
-      } else {
-        shouldUpdate = false;
-      }
-    }
-
-    if (shouldUpdate) {
-      const request = new XMLHttpRequest();
-      request.open('GET', this.config.rankingAPI, true);
-      request.onload = () => {
-        this.processResponse(request);
-        this.showNotification({
-          title: chrome.i18n.getMessage('appName'),
-          message: chrome.i18n.getMessage('updated'),
-          iconUrl: 'logo-128.png'
+    if (!data) {
+      fetchRanking()
+        .then(request => {
+          this.processResponse(request);
+        })
+        .catch(() => {
+          this.setError();
         });
-      };
-      request.onerror = this.setError;
-      request.send();
     } else {
       const cachedRequest = {
         status: 200,
@@ -81,8 +46,6 @@ export default class App extends React.Component {
 
   config = {
     interValTime: 6500,
-    tokyoTimeZone: 'Asia/Tokyo',
-    rankingAPI: 'https://api.pixiv.moe/v1/ranking',
     menuItems: [
       {
         i18nString: 'update',
@@ -115,18 +78,12 @@ export default class App extends React.Component {
     if (o.status >= 200 && o.status < 400) {
       const data = JSON.parse(o.responseText);
 
-      if (data.status === 'success') {
-        this.setState(
-          {
-            response: data.response
-          },
-          () => {
-            this.carousel();
-            setInterval(this.carousel, this.config.interValTime);
-          }
-        );
+      if (data.illusts) {
+        this.setState({ response: data }, () => {
+          this.carousel();
+          setInterval(this.carousel, this.config.interValTime);
+        });
         localStorage.setItem('ranking', o.responseText);
-        localStorage.setItem('ranking:date', data.response.date);
       }
     } else {
       this.setError();
@@ -134,32 +91,17 @@ export default class App extends React.Component {
   }
 
   carousel = () => {
-    const works = this.state.response.works;
+    const works = this.state.response.illusts;
     const val = works[this.state.index];
-
-    document.body.style.backgroundImage =
-      'url(' + val.work.image_urls.large + ')';
+    document.body.style.backgroundImage = 'url(' + val.image_urls.large + ')';
     const footerWidth = this.footerRef.offsetWidth;
     const rankWidth = this.rankRef.offsetWidth;
     const cutLength = Math.ceil(
       Math.ceil((footerWidth - rankWidth) / 40) * 1.3
     );
-    this.setItem('title', this.cutString(val.work.title, cutLength));
-    this.setItem('url', 'http://www.pixiv.net/i/' + val.work.id);
-    this.setItem('rankNum', val.rank + '位');
-    let icon;
-    if (val.previous_rank === 0) {
-      this.setItem('rankMetaText', '初登場');
-      this.setItem('rankMetaIcon', null);
-    } else {
-      this.setItem('rankMetaText', '前日 ' + val.previous_rank + '位');
-      if (val.previous_rank > val.rank) {
-        icon = '↑';
-      } else if (val.previous_rank < val.rank) {
-        icon = '↓';
-      }
-      this.setItem('rankMetaIcon', <span className="compare">{icon}</span>);
-    }
+    this.setItem('title', this.cutString(val.title, cutLength));
+    this.setItem('url', 'http://www.pixiv.net/i/' + val.id);
+    this.setItem('rankNum', this.state.index + 1 + '位');
 
     const startTime = new Date().getTime();
     if (typeof this.progressTimer !== 'undefined') {
@@ -188,28 +130,8 @@ export default class App extends React.Component {
 
   onUpdateClick = () => {
     localStorage.removeItem('ranking');
-    localStorage.removeItem('ranking:date');
     window.location.reload();
   };
-
-  showNotification(opt, time) {
-    if (typeof time === 'undefined') {
-      time = 5000;
-    }
-    opt.type = opt.type || 'basic';
-    chrome.notifications.clear('notifyId');
-    const notification = chrome.notifications.create(
-      'notifyId',
-      opt,
-      notifyId => {
-        return notifyId;
-      }
-    );
-    setTimeout(() => {
-      chrome.notifications.clear('notifyId');
-    }, time);
-    return notification;
-  }
 
   setItem(key, value) {
     const item = this.state.item;
@@ -269,10 +191,6 @@ export default class App extends React.Component {
     return (
       <div ref={ref => (this.rankRef = ref)} className="rank">
         {this.getItem('rankNum')}
-        <div className="yesterday">
-          {this.getItem('rankMetaIcon')}
-          {this.getItem('rankMetaText')}
-        </div>
       </div>
     );
   }
@@ -282,9 +200,8 @@ export default class App extends React.Component {
       <a
         href="#"
         onClick={event => {
-          event.nativeEvent.preventDefault();
+          event.preventDefault();
           localStorage.removeItem('ranking');
-          localStorage.removeItem('ranking:date');
           window.location.reload();
         }}>
         読み込みに失敗しました
