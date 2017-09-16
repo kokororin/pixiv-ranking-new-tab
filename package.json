@@ -1,6 +1,6 @@
 {
   "name": "pixiv-ranking-new-tab",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "Show Pixiv daily rankings on your new tab page.",
   "repository": {
     "type": "git",
@@ -22,8 +22,6 @@
     "start": "cross-env NODE_ENV=development webpack --watch"
   },
   "dependencies": {
-    "moment": "^2.18.1",
-    "moment-timezone": "^0.5.13",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-progress": "^0.0.12"

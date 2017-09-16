@@ -1,7 +1,7 @@
 import React from 'react';
 import Progress from 'react-progress';
 
-import { fetchRanking } from '../utils';
+import { fetchRanking, cutString } from '../utils';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -17,12 +17,6 @@ export default class App extends React.Component {
 
   componentWillMount() {
     document.title = chrome.i18n.getMessage('newTab');
-    const manifest = chrome.runtime.getManifest();
-    const previousVersion = localStorage.getItem('version');
-    if (previousVersion !== manifest.version) {
-      localStorage.removeItem('ranking');
-      localStorage.setItem('version', manifest.version);
-    }
   }
 
   componentDidMount() {
@@ -78,12 +72,13 @@ export default class App extends React.Component {
     if (o.status >= 200 && o.status < 400) {
       const data = JSON.parse(o.responseText);
 
-      if (data.illusts) {
-        this.setState({ response: data }, () => {
+      if (data.status === 'success') {
+        this.setState({ response: data.response }, () => {
           this.carousel();
           setInterval(this.carousel, this.config.interValTime);
         });
         localStorage.setItem('ranking', o.responseText);
+        localStorage.setItem('ranking:date', data.response.date);
       }
     } else {
       this.setError();
@@ -91,17 +86,31 @@ export default class App extends React.Component {
   }
 
   carousel = () => {
-    const works = this.state.response.illusts;
+    const works = this.state.response.works;
     const val = works[this.state.index];
-    document.body.style.backgroundImage = 'url(' + val.image_urls.large + ')';
+    document.body.style.backgroundImage =
+      'url(' + val.work.image_urls.large + ')';
     const footerWidth = this.footerRef.offsetWidth;
     const rankWidth = this.rankRef.offsetWidth;
     const cutLength = Math.ceil(
       Math.ceil((footerWidth - rankWidth) / 40) * 1.3
     );
-    this.setItem('title', this.cutString(val.title, cutLength));
-    this.setItem('url', 'http://www.pixiv.net/i/' + val.id);
-    this.setItem('rankNum', this.state.index + 1 + '位');
+    this.setItem('title', cutString(val.work.title, cutLength));
+    this.setItem('url', 'http://www.pixiv.net/i/' + val.work.id);
+    this.setItem('rankNum', val.rank + '位');
+    let icon;
+    if (val.previous_rank === 0) {
+      this.setItem('rankMetaText', '初登場');
+      this.setItem('rankMetaIcon', null);
+    } else {
+      this.setItem('rankMetaText', '前日 ' + val.previous_rank + '位');
+      if (val.previous_rank > val.rank) {
+        icon = '↑';
+      } else if (val.previous_rank < val.rank) {
+        icon = '↓';
+      }
+      this.setItem('rankMetaIcon', <span className="compare">{icon}</span>);
+    }
 
     const startTime = new Date().getTime();
     if (typeof this.progressTimer !== 'undefined') {
@@ -130,6 +139,7 @@ export default class App extends React.Component {
 
   onUpdateClick = () => {
     localStorage.removeItem('ranking');
+    localStorage.removeItem('ranking:date');
     window.location.reload();
   };
 
@@ -151,29 +161,6 @@ export default class App extends React.Component {
     });
   }
 
-  cutString(str, len) {
-    if (str.length * 2 <= len) {
-      return str;
-    }
-    let strlen = 0;
-    let s = '';
-    for (let i = 0; i < str.length; i++) {
-      s = s + str.charAt(i);
-      if (str.charCodeAt(i) > 128) {
-        strlen = strlen + 2;
-        if (strlen >= len) {
-          return s.substring(0, s.length - 1) + '...';
-        }
-      } else {
-        strlen = strlen + 1;
-        if (strlen >= len) {
-          return s.substring(0, s.length - 2) + '...';
-        }
-      }
-    }
-    return s;
-  }
-
   renderTitleContent() {
     if (this.state.isError) {
       return this.renderError();
@@ -191,6 +178,10 @@ export default class App extends React.Component {
     return (
       <div ref={ref => (this.rankRef = ref)} className="rank">
         {this.getItem('rankNum')}
+        <div className="yesterday">
+          {this.getItem('rankMetaIcon')}
+          {this.getItem('rankMetaText')}
+        </div>
       </div>
     );
   }
@@ -201,8 +192,7 @@ export default class App extends React.Component {
         href="#"
         onClick={event => {
           event.preventDefault();
-          localStorage.removeItem('ranking');
-          window.location.reload();
+          this.onUpdateClick();
         }}>
         読み込みに失敗しました
       </a>

@@ -1,7 +1,7 @@
 export function fetchRanking() {
   return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
-    request.open('GET', 'https://api.pixiv.moe/v2/ranking', true);
+    request.open('GET', 'https://api.pixiv.moe/v1/ranking', true);
     request.onload = () => {
       resolve(request);
     };
@@ -29,4 +29,27 @@ export function showNotification(opt, time) {
     chrome.notifications.clear('notifyId');
   }, time);
   return notification;
+}
+
+export function cutString(str, len) {
+  if (str.length * 2 <= len) {
+    return str;
+  }
+  let strlen = 0;
+  let s = '';
+  for (let i = 0; i < str.length; i++) {
+    s = s + str.charAt(i);
+    if (str.charCodeAt(i) > 128) {
+      strlen = strlen + 2;
+      if (strlen >= len) {
+        return s.substring(0, s.length - 1) + '...';
+      }
+    } else {
+      strlen = strlen + 1;
+      if (strlen >= len) {
+        return s.substring(0, s.length - 2) + '...';
+      }
+    }
+  }
+  return s;
 }
