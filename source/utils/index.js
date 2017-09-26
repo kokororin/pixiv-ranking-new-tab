@@ -1,7 +1,11 @@
 export function fetchRanking() {
   return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
-    request.open('GET', 'https://api.pixiv.moe/v1/ranking', true);
+    request.open(
+      'GET',
+      'https://api.pixiv.moe/v1/ranking?source=extension',
+      true
+    );
     request.onload = () => {
       resolve(request);
     };
