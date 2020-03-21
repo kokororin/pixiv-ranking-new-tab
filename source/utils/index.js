@@ -3,7 +3,7 @@ export function fetchRanking() {
     const request = new XMLHttpRequest();
     request.open(
       'GET',
-      'https://api.pixiv.moe/v1/ranking?source=extension',
+      'https://api.kotori.love/pixiv/ranking?source=extension',
       true
     );
     request.onload = () => {
@@ -56,4 +56,12 @@ export function cutString(str, len) {
     }
   }
   return s;
+}
+
+export function getProxyImage(url) {
+  const regex = /^http?s:\/\/i\.pximg\.net/i;
+  if (regex.test(url)) {
+    return `https://i.pixiv.cat${url.replace(regex, '')}`;
+  }
+  return url;
 }

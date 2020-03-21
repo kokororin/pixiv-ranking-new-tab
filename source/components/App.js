@@ -1,7 +1,7 @@
 import React from 'react';
 import Progress from 'react-progress';
 
-import { fetchRanking, cutString } from '../utils';
+import { fetchRanking, cutString, getProxyImage } from '../utils';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -26,7 +26,8 @@ export default class App extends React.Component {
         .then(request => {
           this.processResponse(request);
         })
-        .catch(() => {
+        .catch(err => {
+          console.error(err);
           this.setError();
         });
     } else {
@@ -78,7 +79,6 @@ export default class App extends React.Component {
           setInterval(this.carousel, this.config.interValTime);
         });
         localStorage.setItem('ranking', o.responseText);
-        localStorage.setItem('ranking:date', data.response.date);
       }
     } else {
       this.setError();
@@ -86,31 +86,31 @@ export default class App extends React.Component {
   }
 
   carousel = () => {
-    const works = this.state.response.works;
+    const works = this.state.response.illusts;
     const val = works[this.state.index];
     document.body.style.backgroundImage =
-      'url(' + val.work.image_urls.large + ')';
+      'url(' + getProxyImage(val.image_urls.large) + ')';
     const footerWidth = this.footerRef.offsetWidth;
     const rankWidth = this.rankRef.offsetWidth;
     const cutLength = Math.ceil(
       Math.ceil((footerWidth - rankWidth) / 40) * 1.3
     );
-    this.setItem('title', cutString(val.work.title, cutLength));
-    this.setItem('url', 'http://www.pixiv.net/i/' + val.work.id);
-    this.setItem('rankNum', val.rank + '位');
-    let icon;
-    if (val.previous_rank === 0) {
-      this.setItem('rankMetaText', '初登場');
-      this.setItem('rankMetaIcon', null);
-    } else {
-      this.setItem('rankMetaText', '前日 ' + val.previous_rank + '位');
-      if (val.previous_rank > val.rank) {
-        icon = '↑';
-      } else if (val.previous_rank < val.rank) {
-        icon = '↓';
-      }
-      this.setItem('rankMetaIcon', <span className="compare">{icon}</span>);
-    }
+    this.setItem('title', cutString(val.title, cutLength));
+    this.setItem('url', 'https://pixiv.moe/' + val.id);
+    this.setItem('rankNum', this.state.index + 1 + '位');
+    // let icon;
+    // if (val.previous_rank === 0) {
+    //   this.setItem('rankMetaText', '初登場');
+    //   this.setItem('rankMetaIcon', null);
+    // } else {
+    //   this.setItem('rankMetaText', '前日 ' + val.previous_rank + '位');
+    //   if (val.previous_rank > val.rank) {
+    //     icon = '↑';
+    //   } else if (val.previous_rank < val.rank) {
+    //     icon = '↓';
+    //   }
+    //   this.setItem('rankMetaIcon', <span className="compare">{icon}</span>);
+    // }
 
     const startTime = new Date().getTime();
     if (typeof this.progressTimer !== 'undefined') {
@@ -139,7 +139,6 @@ export default class App extends React.Component {
 
   onUpdateClick = () => {
     localStorage.removeItem('ranking');
-    localStorage.removeItem('ranking:date');
     window.location.reload();
   };
 
@@ -178,10 +177,10 @@ export default class App extends React.Component {
     return (
       <div ref={ref => (this.rankRef = ref)} className="rank">
         {this.getItem('rankNum')}
-        <div className="yesterday">
+        {/* <div className="yesterday">
           {this.getItem('rankMetaIcon')}
           {this.getItem('rankMetaText')}
-        </div>
+        </div> */}
       </div>
     );
   }

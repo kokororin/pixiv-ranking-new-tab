@@ -16,15 +16,19 @@ const backgroundFetch = () => {
   fetchRanking().then(response => {
     const data = JSON.parse(response.responseText);
     if (data.status === 'success') {
-      let rankingDate = localStorage.getItem('ranking:date');
-      if (!rankingDate) {
-        rankingDate = '2000-01-01';
+      let oldRanking = localStorage.getItem('ranking');
+      try {
+        oldRanking = JSON.parse(localStorage.getItem('ranking'));
+      } catch (err) {
+        oldRanking = { response: { illusts: [] } };
       }
+      const oldIds = oldRanking.response.illusts.map(item => item.id);
+      const newIds = data.response.illusts.map(item => item.id);
+
       if (
-        new Date(rankingDate).getTime() < new Date(data.response.date).getTime()
+        oldIds.join(',') !== newIds.join(',')
       ) {
         localStorage.setItem('ranking', response.responseText);
-        localStorage.setItem('ranking:date', data.response.date);
         showNotification({
           title: chrome.i18n.getMessage('appName'),
           message: chrome.i18n.getMessage('updated'),

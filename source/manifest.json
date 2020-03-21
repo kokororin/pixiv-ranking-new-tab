@@ -20,8 +20,8 @@
   "permissions": [
     "tabs",
     "notifications",
-    "https://api.pixiv.moe/"
+    "https://api.kotori.love/"
   ],
   "default_locale": "en",
-  "version": "0.4.4"
+  "version": "0.5.1"
 }
