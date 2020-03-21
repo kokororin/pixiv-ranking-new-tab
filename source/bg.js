@@ -8,7 +8,6 @@ const manifest = chrome.runtime.getManifest();
 const previousVersion = localStorage.getItem('version');
 if (previousVersion !== manifest.version) {
   localStorage.removeItem('ranking');
-  localStorage.removeItem('ranking:date');
   localStorage.setItem('version', manifest.version);
 }
 
@@ -21,12 +20,12 @@ const backgroundFetch = () => {
       data = { response: { illusts: [] } };
     }
     if (data.status === 'success') {
-      let oldRanking = localStorage.getItem('ranking');
+      let oldRanking = localStorage.getItem('ranking') || {
+        response: { illusts: [] }
+      };
       try {
         oldRanking = JSON.parse(localStorage.getItem('ranking'));
-      } catch (err) {
-        oldRanking = { response: { illusts: [] } };
-      }
+      } catch (err) {}
       const oldIds = oldRanking.response.illusts.map(item => item.id);
       const newIds = data.response.illusts.map(item => item.id);
 

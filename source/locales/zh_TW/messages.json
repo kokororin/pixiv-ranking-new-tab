@@ -25,5 +25,8 @@
   },
   "loadFailed": {
     "message": "載入失敗"
+  },
+  "rankNum": {
+    "message": "$1位"
   }
 }

@@ -25,5 +25,8 @@
   },
   "loadFailed": {
     "message": "Load Failed"
+  },
+  "rankNum": {
+    "message": "No. $1"
   }
 }

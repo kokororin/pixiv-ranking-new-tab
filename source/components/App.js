@@ -1,5 +1,6 @@
 import React from 'react';
 import Progress from 'react-progress';
+import Favorite from './Favorite';
 
 import { fetchRanking, cutString, getProxyImage } from '../utils';
 
@@ -15,11 +16,8 @@ export default class App extends React.Component {
     };
   }
 
-  componentWillMount() {
-    document.title = chrome.i18n.getMessage('newTab');
-  }
-
   componentDidMount() {
+    document.title = chrome.i18n.getMessage('newTab');
     const data = localStorage.getItem('ranking');
     if (!data) {
       fetchRanking()
@@ -101,20 +99,17 @@ export default class App extends React.Component {
     );
     this.setItem('title', cutString(val.title, cutLength));
     this.setItem('url', 'https://pixiv.moe/' + val.id);
-    this.setItem('rankNum', this.state.index + 1 + '位');
-    // let icon;
-    // if (val.previous_rank === 0) {
-    //   this.setItem('rankMetaText', '初登場');
-    //   this.setItem('rankMetaIcon', null);
-    // } else {
-    //   this.setItem('rankMetaText', '前日 ' + val.previous_rank + '位');
-    //   if (val.previous_rank > val.rank) {
-    //     icon = '↑';
-    //   } else if (val.previous_rank < val.rank) {
-    //     icon = '↓';
-    //   }
-    //   this.setItem('rankMetaIcon', <span className="compare">{icon}</span>);
-    // }
+    this.setItem(
+      'rankNum',
+      chrome.i18n.getMessage('rankNum', [this.state.index + 1])
+    );
+    this.setItem(
+      'rankMetaText',
+      <React.Fragment>
+        <Favorite />
+        {val.total_bookmarks}
+      </React.Fragment>
+    );
 
     const startTime = new Date().getTime();
     if (typeof this.progressTimer !== 'undefined') {
@@ -139,6 +134,10 @@ export default class App extends React.Component {
     chrome.tabs.update({
       url
     });
+  }
+
+  openLink(url) {
+    location.href = url;
   }
 
   onUpdateClick = () => {
@@ -171,7 +170,16 @@ export default class App extends React.Component {
     if (this.state.response === null) {
       return null;
     }
-    return <a href={this.getItem('url')}>{this.getItem('title')}</a>;
+    return (
+      <a
+        href="#"
+        onClick={event => {
+          event.preventDefault();
+          this.openLink(this.getItem('url'));
+        }}>
+        {this.getItem('title')}
+      </a>
+    );
   }
 
   renderRankContent() {
@@ -181,10 +189,7 @@ export default class App extends React.Component {
     return (
       <div ref={ref => (this.rankRef = ref)} className="rank">
         {this.getItem('rankNum')}
-        {/* <div className="yesterday">
-          {this.getItem('rankMetaIcon')}
-          {this.getItem('rankMetaText')}
-        </div> */}
+        <div className="meta">{this.getItem('rankMetaText')}</div>
       </div>
     );
   }
