@@ -22,5 +22,8 @@
   },
   "newTab": {
     "message": "新標籤頁"
+  },
+  "loadFailed": {
+    "message": "載入失敗"
   }
 }

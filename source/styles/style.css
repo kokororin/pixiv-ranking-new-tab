@@ -6,6 +6,7 @@ body {
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: contain;
+  background-color: #eee;
   font-family: 'Helvetica Neue', 'arial', 'Hiragino Kaku Gothic ProN', Meiryo,
     sans-serif;
 }
@@ -76,10 +77,7 @@ a:hover {
   padding-left: 0;
   list-style: none;
   background-color: rgba(105, 105, 105, 0.55);
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -0-border-radius: 5px;
+  border-radius: 0 0 5px 5px;
 }
 
 .nav > li {

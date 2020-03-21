@@ -44,25 +44,29 @@ export default class App extends React.Component {
     menuItems: [
       {
         i18nString: 'update',
-        onClick: () => {
+        onClick: event => {
+          event.preventDefault();
           this.onUpdateClick();
         }
       },
       {
         i18nString: 'history',
-        onClick: () => {
+        onClick: event => {
+          event.preventDefault();
           this.openChromeLink('chrome://history');
         }
       },
       {
         i18nString: 'bookmarks',
-        onClick: () => {
+        onClick: event => {
+          event.preventDefault();
           this.openChromeLink('chrome://bookmarks');
         }
       },
       {
         i18nString: 'apps',
-        onClick: () => {
+        onClick: event => {
+          event.preventDefault();
           this.openChromeLink('chrome://apps');
         }
       }
@@ -120,7 +124,7 @@ export default class App extends React.Component {
     this.progressTimer = setInterval(() => {
       const nowTime = new Date().getTime();
       const eclipseTime = nowTime - startTime;
-      const progressPercent = eclipseTime / this.config.interValTime * 100;
+      const progressPercent = (eclipseTime / this.config.interValTime) * 100;
       this.setState({
         progressPercent
       });
@@ -193,7 +197,7 @@ export default class App extends React.Component {
           event.preventDefault();
           this.onUpdateClick();
         }}>
-        読み込みに失敗しました
+        {chrome.i18n.getMessage('loadFailed')}
       </a>
     );
   }

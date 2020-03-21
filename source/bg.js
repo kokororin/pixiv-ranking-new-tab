@@ -14,7 +14,12 @@ if (previousVersion !== manifest.version) {
 
 const backgroundFetch = () => {
   fetchRanking().then(response => {
-    const data = JSON.parse(response.responseText);
+    let data = {};
+    try {
+      data = JSON.parse(response.responseText);
+    } catch (err) {
+      data = { response: { illusts: [] } };
+    }
     if (data.status === 'success') {
       let oldRanking = localStorage.getItem('ranking');
       try {
@@ -25,9 +30,7 @@ const backgroundFetch = () => {
       const oldIds = oldRanking.response.illusts.map(item => item.id);
       const newIds = data.response.illusts.map(item => item.id);
 
-      if (
-        oldIds.join(',') !== newIds.join(',')
-      ) {
+      if (oldIds.join(',') !== newIds.join(',')) {
         localStorage.setItem('ranking', response.responseText);
         showNotification({
           title: chrome.i18n.getMessage('appName'),
