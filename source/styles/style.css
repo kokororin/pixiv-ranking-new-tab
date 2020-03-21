@@ -75,9 +75,11 @@ a:hover {
 .nav {
   margin-bottom: 0;
   padding-left: 0;
+  padding-top: 1px;
+  padding-bottom: 1px;
   list-style: none;
   background-color: rgba(105, 105, 105, 0.55);
-  border-radius: 0 0 5px 5px;
+  border-radius: 5px;
 }
 
 .nav > li {
@@ -116,9 +118,6 @@ a:hover {
   .navbar-nav.navbar-right:last-child {
     margin-right: -15px;
   }
-}
-
-@media (min-width: 768px) {
   .navbar-right {
     float: right !important;
   }
