@@ -22,17 +22,19 @@
     "start": "cross-env NODE_ENV=development webpack --watch"
   },
   "dependencies": {
+    "rc-align": "^3.0.0-rc.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-md-spinner": "^1.0.0",
     "react-progress": "^0.0.12"
   },
   "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.9.0",
+    "@babel/preset-react": "^7.9.1",
     "archiver": "^2.0.3",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
+    "babel-loader": "^8.1.0",
     "clean-webpack-plugin": "^0.1.16",
     "copy-webpack-plugin": "^4.0.1",
     "cross-env": "^5.0.5",

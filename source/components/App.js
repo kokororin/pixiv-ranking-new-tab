@@ -1,5 +1,6 @@
 import React from 'react';
 import Progress from 'react-progress';
+import MDSpinner from 'react-md-spinner';
 import Favorite from './Favorite';
 
 import { fetchRanking, cutString, getProxyImage } from '../utils';
@@ -12,7 +13,9 @@ export default class App extends React.Component {
       response: null,
       index: 0,
       item: {},
-      progressPercent: 0
+      progressPercent: 0,
+      isError: false,
+      isLoading: true
     };
   }
 
@@ -27,8 +30,12 @@ export default class App extends React.Component {
         .catch(err => {
           console.error(err);
           this.setError();
+        })
+        .finally(() => {
+          this.setState({ isLoading: false });
         });
     } else {
+      this.setState({ isLoading: false });
       const cachedRequest = {
         status: 200,
         responseText: data
@@ -105,10 +112,10 @@ export default class App extends React.Component {
     );
     this.setItem(
       'rankMetaText',
-      <React.Fragment>
+      <>
         <Favorite />
         {val.total_bookmarks}
-      </React.Fragment>
+      </>
     );
 
     const startTime = new Date().getTime();
@@ -209,7 +216,7 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <>
         <div id="top-right" className="right">
           <div id="top-menu">
             <ul className="nav navbar-nav navbar-right">
@@ -223,12 +230,19 @@ export default class App extends React.Component {
             </ul>
           </div>
         </div>
-        <Progress speed={0.05} percent={this.state.progressPercent} />
+        {this.state.isLoading ? (
+          <div className="loading-spinner">
+            <MDSpinner size={40} />
+          </div>
+        ) : (
+          <Progress speed={0.05} percent={this.state.progressPercent} />
+        )}
+
         <footer ref={ref => (this.footerRef = ref)} className="footer">
           <div className="title">{this.renderTitleContent()}</div>
           {this.renderRankContent()}
         </footer>
-      </div>
+      </>
     );
   }
 }
