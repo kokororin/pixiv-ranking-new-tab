@@ -2,6 +2,13 @@ import React from 'react';
 import Progress from 'react-progress';
 import MDSpinner from 'react-md-spinner';
 import Favorite from './Favorite';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faChevronLeft,
+  faChevronRight,
+  faRedo,
+  faPause
+} from '@fortawesome/free-solid-svg-icons';
 
 import { fetchRanking, cutString, getProxyImage } from '../utils';
 
@@ -46,14 +53,21 @@ export default class App extends React.Component {
 
   config = {
     interValTime: 6500,
-    menuItems: [
+    actionItems: [
       {
-        i18nString: 'update',
-        onClick: event => {
-          event.preventDefault();
-          this.onUpdateClick();
-        }
+        icon: faChevronLeft
       },
+      {
+        icon: faChevronRight
+      },
+      {
+        icon: faRedo
+      },
+      {
+        icon: faPause
+      }
+    ],
+    menuItems: [
       {
         i18nString: 'history',
         onClick: event => {
@@ -217,8 +231,21 @@ export default class App extends React.Component {
   render() {
     return (
       <>
-        <div id="top-right" className="right">
-          <div id="top-menu">
+        <div className="top left">
+          <div className="top-menu">
+            <ul className="nav navbar-nav navbar-right">
+              {this.config.actionItems.map((elem, index) => (
+                <li key={index}>
+                  <a href="#" onClick={elem.onClick}>
+                    <FontAwesomeIcon icon={elem.icon} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className="top right">
+          <div className="top-menu">
             <ul className="nav navbar-nav navbar-right">
               {this.config.menuItems.map((elem, index) => (
                 <li key={index}>
@@ -235,7 +262,11 @@ export default class App extends React.Component {
             <MDSpinner size={40} />
           </div>
         ) : (
-          <Progress speed={0.05} percent={this.state.progressPercent} />
+          <Progress
+            speed={0.07}
+            percent={this.state.progressPercent}
+            style={{ boxShadow: 'none' }}
+          />
         )}
 
         <footer ref={ref => (this.footerRef = ref)} className="footer">
