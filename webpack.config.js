@@ -33,7 +33,6 @@ const config = {
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
       {
         from: 'source/locales',
@@ -58,6 +57,7 @@ ${fs.readFileSync(path.join(__dirname, 'LICENSE')).toString()}
 };
 
 if (process.env.NODE_ENV === 'production') {
+  config.plugins.push(new CleanWebpackPlugin());
   config.plugins.push(function() {
     this.plugin('done', function() {
       const fileName = __dirname + '/extension.zip';

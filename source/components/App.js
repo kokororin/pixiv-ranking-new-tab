@@ -1,15 +1,16 @@
 import React from 'react';
 import Progress from 'react-progress';
 import MDSpinner from 'react-md-spinner';
-import Favorite from './Favorite';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faChevronLeft,
   faChevronRight,
   faRedo,
-  faPause
+  faPause,
+  faPlay,
+  faHeart
 } from '@fortawesome/free-solid-svg-icons';
-
+import SafeAnchor from './SafeAnchor';
 import { fetchRanking, cutString, getProxyImage } from '../utils';
 
 export default class App extends React.Component {
@@ -22,8 +23,48 @@ export default class App extends React.Component {
       item: {},
       progressPercent: 0,
       isError: false,
-      isLoading: true
+      isLoading: true,
+      isPaused: false,
+      interValTime: 6500
     };
+  }
+
+  get actionItems() {
+    return [
+      {
+        icon: faChevronLeft,
+        onClick: this.onPrevClick
+      },
+      {
+        icon: faChevronRight,
+        onClick: this.onNextClick
+      },
+      {
+        icon: faRedo,
+        onClick: this.onUpdateClick
+      },
+      {
+        icon: !this.state.isPaused ? faPause : faPlay,
+        onClick: this.onToggleClick
+      }
+    ];
+  }
+
+  get menuItems() {
+    return [
+      {
+        i18nString: 'history',
+        onClick: () => this.openChromeLink('chrome://history')
+      },
+      {
+        i18nString: 'bookmarks',
+        onClick: () => this.openChromeLink('chrome://bookmarks')
+      },
+      {
+        i18nString: 'apps',
+        onClick: () => this.openChromeLink('chrome://apps')
+      }
+    ];
   }
 
   componentDidMount() {
@@ -51,47 +92,6 @@ export default class App extends React.Component {
     }
   }
 
-  config = {
-    interValTime: 6500,
-    actionItems: [
-      {
-        icon: faChevronLeft
-      },
-      {
-        icon: faChevronRight
-      },
-      {
-        icon: faRedo
-      },
-      {
-        icon: faPause
-      }
-    ],
-    menuItems: [
-      {
-        i18nString: 'history',
-        onClick: event => {
-          event.preventDefault();
-          this.openChromeLink('chrome://history');
-        }
-      },
-      {
-        i18nString: 'bookmarks',
-        onClick: event => {
-          event.preventDefault();
-          this.openChromeLink('chrome://bookmarks');
-        }
-      },
-      {
-        i18nString: 'apps',
-        onClick: event => {
-          event.preventDefault();
-          this.openChromeLink('chrome://apps');
-        }
-      }
-    ]
-  };
-
   processResponse(o) {
     if (o.status >= 200 && o.status < 400) {
       const data = JSON.parse(o.responseText);
@@ -99,7 +99,10 @@ export default class App extends React.Component {
       if (data.status === 'success') {
         this.setState({ response: data.response }, () => {
           this.carousel();
-          setInterval(this.carousel, this.config.interValTime);
+          this.carouselTimer = setInterval(
+            this.carousel,
+            this.state.interValTime
+          );
         });
         localStorage.setItem('ranking', o.responseText);
       }
@@ -108,7 +111,7 @@ export default class App extends React.Component {
     }
   }
 
-  carousel = () => {
+  carousel = (next = true) => {
     const works = this.state.response.illusts;
     const val = works[this.state.index];
     document.body.style.backgroundImage =
@@ -118,8 +121,16 @@ export default class App extends React.Component {
     const cutLength = Math.ceil(
       Math.ceil((footerWidth - rankWidth) / 40) * 1.3
     );
+    let newIndex = next ? this.state.index + 1 : this.state.index - 1;
+    if (newIndex >= works.length) {
+      newIndex = 0;
+    }
+    if (newIndex < 0) {
+      newIndex = works.length - 1;
+    }
+
     this.setItem('title', cutString(val.title, cutLength));
-    this.setItem('url', 'https://pixiv.moe/' + val.id);
+    this.setItem('url', `'https://pixiv.moe/${val.id}`);
     this.setItem(
       'rankNum',
       chrome.i18n.getMessage('rankNum', [this.state.index + 1])
@@ -127,28 +138,18 @@ export default class App extends React.Component {
     this.setItem(
       'rankMetaText',
       <>
-        <Favorite />
+        <FontAwesomeIcon icon={faHeart} />
         {val.total_bookmarks}
       </>
     );
 
-    const startTime = new Date().getTime();
-    if (typeof this.progressTimer !== 'undefined') {
+    if (this.progressTimer) {
       clearInterval(this.progressTimer);
     }
 
-    this.progressTimer = setInterval(() => {
-      const nowTime = new Date().getTime();
-      const eclipseTime = nowTime - startTime;
-      const progressPercent = (eclipseTime / this.config.interValTime) * 100;
-      this.setState({
-        progressPercent
-      });
-    }, 100);
+    this.progressTimer = this.createProgressTimer();
 
-    this.setState({
-      index: this.state.index >= works.length - 1 ? 0 : this.state.index + 1
-    });
+    this.setState({ index: newIndex, isPaused: false });
   };
 
   openChromeLink(url) {
@@ -164,6 +165,43 @@ export default class App extends React.Component {
   onUpdateClick = () => {
     localStorage.removeItem('ranking');
     window.location.reload();
+  };
+
+  onNextClick = () => {
+    clearInterval(this.progressTimer);
+    this.carousel(true);
+    clearInterval(this.carouselTimer);
+    this.carouselTimer = setInterval(this.carousel, this.state.interValTime);
+  };
+
+  onPrevClick = () => {
+    clearInterval(this.progressTimer);
+    this.carousel(false);
+    clearInterval(this.carouselTimer);
+    this.carouselTimer = setInterval(this.carousel, this.state.interValTime);
+  };
+
+  onToggleClick = () => {
+    if (this.state.isPaused) {
+      this.progressTimer = this.createProgressTimer();
+      this.carouselTimer = setInterval(this.carousel, this.state.interValTime);
+    } else {
+      clearInterval(this.progressTimer);
+      clearInterval(this.carouselTimer);
+    }
+    this.setState({ isPaused: !this.state.isPaused });
+  };
+
+  createProgressTimer = () => {
+    const startTime = new Date().getTime();
+    return setInterval(() => {
+      const nowTime = new Date().getTime();
+      const eclipseTime = nowTime - startTime;
+      const progressPercent = (eclipseTime / this.state.interValTime) * 100;
+      this.setState({
+        progressPercent
+      });
+    }, 50);
   };
 
   setItem(key, value) {
@@ -192,14 +230,9 @@ export default class App extends React.Component {
       return null;
     }
     return (
-      <a
-        href="#"
-        onClick={event => {
-          event.preventDefault();
-          this.openLink(this.getItem('url'));
-        }}>
+      <SafeAnchor onClick={() => this.openLink(this.getItem('url'))}>
         {this.getItem('title')}
-      </a>
+      </SafeAnchor>
     );
   }
 
@@ -217,14 +250,9 @@ export default class App extends React.Component {
 
   renderError() {
     return (
-      <a
-        href="#"
-        onClick={event => {
-          event.preventDefault();
-          this.onUpdateClick();
-        }}>
+      <SafeAnchor onClick={this.onUpdateClick}>
         {chrome.i18n.getMessage('loadFailed')}
-      </a>
+      </SafeAnchor>
     );
   }
 
@@ -234,11 +262,11 @@ export default class App extends React.Component {
         <div className="top left">
           <div className="top-menu">
             <ul className="nav navbar-nav navbar-right">
-              {this.config.actionItems.map((elem, index) => (
+              {this.actionItems.map((elem, index) => (
                 <li key={index}>
-                  <a href="#" onClick={elem.onClick}>
+                  <SafeAnchor onClick={elem.onClick}>
                     <FontAwesomeIcon icon={elem.icon} />
-                  </a>
+                  </SafeAnchor>
                 </li>
               ))}
             </ul>
@@ -247,11 +275,11 @@ export default class App extends React.Component {
         <div className="top right">
           <div className="top-menu">
             <ul className="nav navbar-nav navbar-right">
-              {this.config.menuItems.map((elem, index) => (
+              {this.menuItems.map((elem, index) => (
                 <li key={index}>
-                  <a href="#" onClick={elem.onClick}>
+                  <SafeAnchor onClick={elem.onClick}>
                     {chrome.i18n.getMessage(elem.i18nString)}
-                  </a>
+                  </SafeAnchor>
                 </li>
               ))}
             </ul>
