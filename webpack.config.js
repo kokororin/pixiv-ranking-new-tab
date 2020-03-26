@@ -4,9 +4,10 @@ const fs = require('fs');
 const archiver = require('archiver');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const config = {
+  mode: process.env.NODE_ENV,
   entry: {
     app: ['./source/index'],
     bg: ['./source/bg']
@@ -29,12 +30,10 @@ const config = {
       }
     ]
   },
-  stats: 'detailed',
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new CleanWebpackPlugin(['extension']),
+    new CleanWebpackPlugin(),
     new CopyWebpackPlugin([
       {
         from: 'source/locales',
@@ -59,17 +58,6 @@ ${fs.readFileSync(path.join(__dirname, 'LICENSE')).toString()}
 };
 
 if (process.env.NODE_ENV === 'production') {
-  config.plugins.unshift(
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        drop_console: true
-      },
-      beautify: false,
-      comments: false
-    })
-  );
-
   config.plugins.push(function() {
     this.plugin('done', function() {
       const fileName = __dirname + '/extension.zip';
