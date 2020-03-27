@@ -28,5 +28,17 @@
   },
   "rankNum": {
     "message": "No. $1"
+  },
+  "options": {
+    "message": "Options"
+  },
+  "optionShowProgress": {
+    "message": "Show Progress"
+  },
+  "optionIntervalTime": {
+    "message": "Carousel interval (seconds)"
+  },
+  "optionClearCache": {
+    "message": "Empty the cache"
   }
 }

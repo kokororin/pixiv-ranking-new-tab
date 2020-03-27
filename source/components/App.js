@@ -3,15 +3,14 @@ import Progress from 'react-progress';
 import MDSpinner from 'react-md-spinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faChevronLeft,
-  faChevronRight,
-  faRedo,
+  faStepBackward,
+  faStepForward,
   faPause,
   faPlay,
   faHeart
 } from '@fortawesome/free-solid-svg-icons';
 import SafeAnchor from './SafeAnchor';
-import { fetchRanking, cutString, getProxyImage } from '../utils';
+import { fetchRanking, cutString, getProxyImage, getOption } from '../utils';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -24,28 +23,23 @@ export default class App extends React.Component {
       progressPercent: 0,
       isError: false,
       isLoading: true,
-      isPaused: false,
-      interValTime: 6500
+      isPaused: false
     };
   }
 
   get actionItems() {
     return [
       {
-        icon: faChevronLeft,
+        icon: faStepBackward,
         onClick: this.onPrevClick
-      },
-      {
-        icon: faChevronRight,
-        onClick: this.onNextClick
-      },
-      {
-        icon: faRedo,
-        onClick: this.onUpdateClick
       },
       {
         icon: !this.state.isPaused ? faPause : faPlay,
         onClick: this.onToggleClick
+      },
+      {
+        icon: faStepForward,
+        onClick: this.onNextClick
       }
     ];
   }
@@ -101,7 +95,7 @@ export default class App extends React.Component {
           this.carousel();
           this.carouselTimer = setInterval(
             this.carousel,
-            this.state.interValTime
+            getOption('intervalTime')
           );
         });
         localStorage.setItem('ranking', o.responseText);
@@ -171,20 +165,23 @@ export default class App extends React.Component {
     clearInterval(this.progressTimer);
     this.carousel(true);
     clearInterval(this.carouselTimer);
-    this.carouselTimer = setInterval(this.carousel, this.state.interValTime);
+    this.carouselTimer = setInterval(this.carousel, getOption('intervalTime'));
   };
 
   onPrevClick = () => {
     clearInterval(this.progressTimer);
     this.carousel(false);
     clearInterval(this.carouselTimer);
-    this.carouselTimer = setInterval(this.carousel, this.state.interValTime);
+    this.carouselTimer = setInterval(this.carousel, getOption('intervalTime'));
   };
 
   onToggleClick = () => {
     if (this.state.isPaused) {
       this.progressTimer = this.createProgressTimer();
-      this.carouselTimer = setInterval(this.carousel, this.state.interValTime);
+      this.carouselTimer = setInterval(
+        this.carousel,
+        getOption('intervalTime')
+      );
     } else {
       clearInterval(this.progressTimer);
       clearInterval(this.carouselTimer);
@@ -197,7 +194,7 @@ export default class App extends React.Component {
     return setInterval(() => {
       const nowTime = new Date().getTime();
       const eclipseTime = nowTime - startTime;
-      const progressPercent = (eclipseTime / this.state.interValTime) * 100;
+      const progressPercent = (eclipseTime / getOption('intervalTime')) * 100;
       this.setState({
         progressPercent
       });
@@ -290,11 +287,13 @@ export default class App extends React.Component {
             <MDSpinner size={40} />
           </div>
         ) : (
-          <Progress
-            speed={0.07}
-            percent={this.state.progressPercent}
-            style={{ boxShadow: 'none' }}
-          />
+          getOption('showProgress') && (
+            <Progress
+              speed={0.07}
+              percent={this.state.progressPercent}
+              style={{ boxShadow: 'none' }}
+            />
+          )
         )}
 
         <footer ref={ref => (this.footerRef = ref)} className="footer">

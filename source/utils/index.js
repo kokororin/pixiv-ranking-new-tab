@@ -65,3 +65,26 @@ export function getProxyImage(url) {
   }
   return url;
 }
+
+const defaultOptions = {
+  showProgress: true,
+  intervalTime: 6500
+};
+
+export function setOption(key, value) {
+  let options = localStorage.getItem('options') || '{}';
+  options = JSON.parse(options);
+  options = { ...defaultOptions, ...options };
+  options[key] = value;
+  localStorage.setItem('options', JSON.stringify(options));
+}
+
+export function getOption(key) {
+  let options = localStorage.getItem('options') || '{}';
+  options = JSON.parse(options);
+  options = { ...defaultOptions, ...options };
+  if (!key) {
+    return options;
+  }
+  return options[key];
+}

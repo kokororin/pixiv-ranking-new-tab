@@ -28,5 +28,17 @@
   },
   "rankNum": {
     "message": "$1位"
+  },
+  "options": {
+    "message": "选项"
+  },
+  "optionShowProgress": {
+    "message": "显示进度条"
+  },
+  "optionIntervalTime": {
+    "message": "轮播间隔（秒）"
+  },
+  "optionClearCache": {
+    "message": "清空缓存"
   }
 }

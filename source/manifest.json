@@ -17,11 +17,11 @@
   },
   "manifest_version": 2,
   "name": "__MSG_appName__",
-  "permissions": [
-    "tabs",
-    "notifications",
-    "https://api.kotori.love/"
-  ],
+  "permissions": ["tabs", "notifications", "https://api.kotori.love/"],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
   "default_locale": "en",
   "version": "0.5.2"
 }

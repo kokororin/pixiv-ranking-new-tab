@@ -28,5 +28,17 @@
   },
   "rankNum": {
     "message": "$1位"
+  },
+  "options": {
+    "message": "オプション"
+  },
+  "optionShowProgress": {
+    "message": "進行状況バーを表示する"
+  },
+  "optionIntervalTime": {
+    "message": "カルーセル間隔（秒）"
+  },
+  "optionClearCache": {
+    "message": "キャッシュを空にする"
   }
 }

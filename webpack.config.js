@@ -9,8 +9,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const config = {
   mode: process.env.NODE_ENV,
   entry: {
-    app: ['./source/index'],
-    bg: ['./source/bg']
+    app: './source/app',
+    bg: './source/bg',
+    options: './source/options'
   },
   output: {
     path: path.join(__dirname, 'extension'),
@@ -27,6 +28,17 @@ const config = {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /(node_modules|bower_components)/
+      },
+      {
+        test: /\.(png|jpg|gif|woff|woff2|ttf|svg|eot)(\?|\?[a-z0-9]+)?$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10000
+            }
+          }
+        ]
       }
     ]
   },
@@ -60,7 +72,7 @@ if (process.env.NODE_ENV === 'production') {
   config.plugins.push(new CleanWebpackPlugin());
   config.plugins.push(function() {
     this.plugin('done', function() {
-      const fileName = __dirname + '/extension.zip';
+      const fileName = path.join(__dirname, 'extension.zip');
       if (fs.existsSync(fileName)) {
         fs.unlinkSync(fileName);
       }
