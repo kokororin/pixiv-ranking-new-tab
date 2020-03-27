@@ -287,7 +287,8 @@ export default class App extends React.Component {
             <MDSpinner size={40} />
           </div>
         ) : (
-          getOption('showProgress') && (
+          getOption('showProgress') &&
+          !this.state.isPaused && (
             <Progress
               speed={0.07}
               percent={this.state.progressPercent}
