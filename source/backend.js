@@ -1,7 +1,7 @@
 import { fetchRanking, showNotification } from './utils';
 
 chrome.browserAction.onClicked.addListener(() => {
-  chrome.tabs.create({ url: 'http://www.pixiv.net/ranking.php?mode=daily' });
+  chrome.tabs.create({ url: 'https://pixiv.moe/?entry=ranking' });
 });
 
 const manifest = chrome.runtime.getManifest();
@@ -26,8 +26,8 @@ const backgroundFetch = () => {
       try {
         oldRanking = JSON.parse(localStorage.getItem('ranking'));
       } catch (err) {}
-      const oldIds = oldRanking.response.illusts.map(item => item.id);
-      const newIds = data.response.illusts.map(item => item.id);
+      const oldIds = oldRanking?.response?.illusts.map(item => item.id);
+      const newIds = data?.response?.illusts.map(item => item.id);
 
       if (oldIds.join(',') !== newIds.join(',')) {
         localStorage.setItem('ranking', response.responseText);

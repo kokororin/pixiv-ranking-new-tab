@@ -9,9 +9,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const config = {
   mode: process.env.NODE_ENV,
   entry: {
-    app: './source/app',
-    bg: './source/bg',
-    options: './source/options'
+    main: './source/pages/main',
+    options: './source/pages/options',
+    backend: './source/backend'
   },
   output: {
     path: path.join(__dirname, 'extension'),
@@ -60,6 +60,7 @@ const config = {
         from: 'source/icons'
       }
     ]),
+    new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new webpack.BannerPlugin({
       banner: `
 ${fs.readFileSync(path.join(__dirname, 'LICENSE')).toString()}
@@ -69,7 +70,6 @@ ${fs.readFileSync(path.join(__dirname, 'LICENSE')).toString()}
 };
 
 if (process.env.NODE_ENV === 'production') {
-  config.plugins.push(new CleanWebpackPlugin());
   config.plugins.push(function() {
     this.plugin('done', function() {
       const fileName = path.join(__dirname, 'extension.zip');

@@ -35,6 +35,9 @@
   "optionShowProgress": {
     "message": "顯示進度條"
   },
+  "optionShowPause": {
+    "message": "顯示暫停按鈕"
+  },
   "optionIntervalTime": {
     "message": "輪播間隔（秒）"
   },

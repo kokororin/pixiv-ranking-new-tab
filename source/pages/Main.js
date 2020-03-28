@@ -1,18 +1,20 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Progress from 'react-progress';
 import MDSpinner from 'react-md-spinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faStepBackward,
-  faStepForward,
+  faArrowLeft,
+  faArrowRight,
   faPause,
   faPlay,
   faHeart
 } from '@fortawesome/free-solid-svg-icons';
-import SafeAnchor from './SafeAnchor';
+import SafeAnchor from '../components/SafeAnchor';
 import { fetchRanking, cutString, getProxyImage, getOption } from '../utils';
+import '../styles/main.css';
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
 
@@ -30,16 +32,17 @@ export default class App extends React.Component {
   get actionItems() {
     return [
       {
-        icon: faStepBackward,
+        icon: faArrowLeft,
         onClick: this.onPrevClick
       },
       {
-        icon: !this.state.isPaused ? faPause : faPlay,
-        onClick: this.onToggleClick
+        icon: faArrowRight,
+        onClick: this.onNextClick
       },
       {
-        icon: faStepForward,
-        onClick: this.onNextClick
+        icon: !this.state.isPaused ? faPause : faPlay,
+        onClick: this.onToggleClick,
+        visible: () => getOption('showPause')
       }
     ];
   }
@@ -124,7 +127,7 @@ export default class App extends React.Component {
     }
 
     this.setItem('title', cutString(val.title, cutLength));
-    this.setItem('url', `'https://pixiv.moe/${val.id}`);
+    this.setItem('url', `https://pixiv.moe/illust/${val.id}`);
     this.setItem(
       'rankNum',
       chrome.i18n.getMessage('rankNum', [this.state.index + 1])
@@ -259,23 +262,25 @@ export default class App extends React.Component {
         <div className="top left">
           <div className="top-menu">
             <ul className="nav navbar-nav navbar-right">
-              {this.actionItems.map((elem, index) => (
-                <li key={index}>
-                  <SafeAnchor onClick={elem.onClick}>
-                    <FontAwesomeIcon icon={elem.icon} />
-                  </SafeAnchor>
-                </li>
-              ))}
+              {this.actionItems
+                .filter(item => !item.visible || item.visible())
+                .map((item, index) => (
+                  <li key={index}>
+                    <SafeAnchor onClick={item.onClick}>
+                      <FontAwesomeIcon icon={item.icon} />
+                    </SafeAnchor>
+                  </li>
+                ))}
             </ul>
           </div>
         </div>
         <div className="top right">
           <div className="top-menu">
             <ul className="nav navbar-nav navbar-right">
-              {this.menuItems.map((elem, index) => (
+              {this.menuItems.map((item, index) => (
                 <li key={index}>
-                  <SafeAnchor onClick={elem.onClick}>
-                    {chrome.i18n.getMessage(elem.i18nString)}
+                  <SafeAnchor onClick={item.onClick}>
+                    {chrome.i18n.getMessage(item.i18nString)}
                   </SafeAnchor>
                 </li>
               ))}
@@ -287,8 +292,7 @@ export default class App extends React.Component {
             <MDSpinner size={40} />
           </div>
         ) : (
-          getOption('showProgress') &&
-          !this.state.isPaused && (
+          getOption('showProgress') && (
             <Progress
               speed={0.07}
               percent={this.state.progressPercent}
@@ -305,3 +309,5 @@ export default class App extends React.Component {
     );
   }
 }
+
+ReactDOM.render(<App />, document.querySelector('#root'));

@@ -35,6 +35,9 @@
   "optionShowProgress": {
     "message": "Show Progress"
   },
+  "optionShowPause": {
+    "message": "Show Pause"
+  },
   "optionIntervalTime": {
     "message": "Carousel interval (seconds)"
   },

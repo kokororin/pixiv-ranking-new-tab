@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {
   FormGroup,
   FormControlLabel,
@@ -15,6 +16,7 @@ import {
   Cached as CachedIcon
 } from '@material-ui/icons';
 import { getOption, setOption } from '../utils';
+import '../styles/options.css';
 
 export default class Options extends React.Component {
   constructor(props) {
@@ -33,6 +35,7 @@ export default class Options extends React.Component {
     const { options } = this.state;
     switch (key) {
       case 'showProgress':
+      case 'showPause':
         options[key] = event.target.checked;
         setOption(key, options[key]);
         break;
@@ -79,15 +82,26 @@ export default class Options extends React.Component {
             </FormGroup>
 
             <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={options.showPause}
+                    onChange={event => this.onChange('showPause', event)}
+                    color="primary"
+                  />
+                }
+                label={chrome.i18n.getMessage('optionShowPause')}
+              />
+            </FormGroup>
+
+            <FormGroup>
               <FormControl>
-                <InputLabel
-                  shrink
-                  id="demo-simple-select-placeholder-label-label">
+                <InputLabel shrink id="intervalTime-label-label">
                   {chrome.i18n.getMessage('optionIntervalTime')}
                 </InputLabel>
                 <Select
-                  labelId="demo-simple-select-placeholder-label-label"
-                  id="demo-simple-select-placeholder-label"
+                  labelId="intervalTime-label-label"
+                  id="intervalTime-label"
                   value={options.intervalTime}
                   onChange={event => this.onChange('intervalTime', event)}>
                   <MenuItem value={6500}>6.5</MenuItem>
@@ -106,30 +120,26 @@ export default class Options extends React.Component {
               {chrome.i18n.getMessage('optionClearCache')}
             </Button>
 
-            <div id="about">
-              <p>
-                <Button
-                  variant="contained"
-                  color="default"
-                  startIcon={<GithubIcon />}
-                  onClick={() =>
-                    this.openLink(
-                      'https://github.com/kokororin/pixiv-ranking-new-tab'
-                    )
-                  }>
-                  Fork on GitHub
-                </Button>
+            <div className="about">
+              <Button
+                variant="outlined"
+                startIcon={<GithubIcon />}
+                onClick={() =>
+                  this.openLink(
+                    'https://github.com/kokororin/pixiv-ranking-new-tab'
+                  )
+                }>
+                Fork on GitHub
+              </Button>
 
-                <Button
-                  variant="contained"
-                  color="default"
-                  startIcon={<TwitterIcon style={{ color: '#1DA1F2' }} />}
-                  onClick={() =>
-                    this.openLink('https://twitter.com/sora_yakami')
-                  }>
-                  Follow on Twitter
-                </Button>
-              </p>
+              <Button
+                variant="outlined"
+                startIcon={<TwitterIcon style={{ color: '#1DA1F2' }} />}
+                onClick={() =>
+                  this.openLink('https://twitter.com/sora_yakami')
+                }>
+                Follow on Twitter
+              </Button>
             </div>
           </div>
         </div>
@@ -137,3 +147,5 @@ export default class Options extends React.Component {
     );
   }
 }
+
+ReactDOM.render(<Options />, document.querySelector('#root'));

@@ -35,6 +35,9 @@
   "optionShowProgress": {
     "message": "進行状況バーを表示する"
   },
+  "optionShowPause": {
+    "message": "一時停止ボタンを表示"
+  },
   "optionIntervalTime": {
     "message": "カルーセル間隔（秒）"
   },
