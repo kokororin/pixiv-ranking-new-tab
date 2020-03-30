@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Progress from 'react-progress';
 import MDSpinner from 'react-md-spinner';
+import Downloader from 'js-file-downloader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowLeft,
@@ -12,7 +13,8 @@ import {
   faHistory,
   faBookmark,
   faRocket,
-  faFileDownload
+  faFileDownload,
+  faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 import SafeAnchor from '../components/SafeAnchor';
 import { fetchRanking, cutString, getProxyImage, getOption } from '../utils';
@@ -29,7 +31,8 @@ class App extends React.Component {
       progressPercent: 0,
       isError: false,
       isLoading: true,
-      isPaused: false
+      isPaused: false,
+      isDownloading: false
     };
   }
 
@@ -49,7 +52,8 @@ class App extends React.Component {
         visible: () => getOption('showPause')
       },
       {
-        icon: faFileDownload,
+        icon: !this.state.isDownloading ? faFileDownload : faSpinner,
+        iconProps: !this.state.isDownloading ? {} : { spin: true },
         onClick: this.onDownloadClick
       }
     ];
@@ -206,7 +210,15 @@ class App extends React.Component {
 
   onDownloadClick = () => {
     const illustId = this.getItem('id');
-    location.href = `https://api.kotori.love/pixiv/illust/${illustId}.zip`;
+    if (this.state.isDownloading) {
+      return;
+    }
+    this.setState({ isDownloading: true });
+    new Downloader({
+      url: `https://api.kotori.love/pixiv/illust/${illustId}.zip`
+    }).finally(() => {
+      this.setState({ isDownloading: false });
+    });
   };
 
   createProgressTimer = () => {
@@ -284,7 +296,7 @@ class App extends React.Component {
                 .map((item, index) => (
                   <li key={index}>
                     <SafeAnchor onClick={item.onClick}>
-                      <FontAwesomeIcon icon={item.icon} />
+                      <FontAwesomeIcon icon={item.icon} {...item.iconProps} />
                     </SafeAnchor>
                   </li>
                 ))}

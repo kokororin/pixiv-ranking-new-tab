@@ -16,10 +16,7 @@ export function fetchRanking() {
   });
 }
 
-export function showNotification(opt, time) {
-  if (typeof time === 'undefined') {
-    time = 5000;
-  }
+export function showNotification(opt, time = 5000) {
   opt.type = opt.type || 'basic';
   chrome.notifications.clear('notifyId');
   const notification = chrome.notifications.create(

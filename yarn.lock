@@ -3449,6 +3449,11 @@ isobject@^3.0.0, isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
+js-file-downloader@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/js-file-downloader/-/js-file-downloader-1.1.5.tgz#fbc87b19b0ee7eb3b65db5edabdb0eca8aa42b60"
+  integrity sha512-dVj4Gx3j+ds+3sZtfXmVpTKSJLvDiUIQiX+NhFCCwsS8KZlBj84l7Xs2Ifb10eTV/veZIrtR8Zzh1OfaOOkIsg==
+
 js-tokens@^3.0.0:
   version "3.0.2"
   resolved "https://registry.npmjs.org/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
