@@ -41,6 +41,9 @@
   "optionIntervalTime": {
     "message": "轮播间隔（秒）"
   },
+  "optionChromeLinkAsIcons": {
+    "message": "以图标形式展示 Chrome 链接"
+  },
   "optionClearCache": {
     "message": "清空缓存"
   }

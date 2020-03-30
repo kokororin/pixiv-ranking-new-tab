@@ -41,6 +41,9 @@
   "optionIntervalTime": {
     "message": "Carousel interval (seconds)"
   },
+  "optionChromeLinkAsIcons": {
+    "message": "Show Chrome links as icons"
+  },
   "optionClearCache": {
     "message": "Empty the cache"
   }

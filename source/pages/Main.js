@@ -8,7 +8,11 @@ import {
   faArrowRight,
   faPause,
   faPlay,
-  faHeart
+  faHeart,
+  faHistory,
+  faBookmark,
+  faRocket,
+  faFileDownload
 } from '@fortawesome/free-solid-svg-icons';
 import SafeAnchor from '../components/SafeAnchor';
 import { fetchRanking, cutString, getProxyImage, getOption } from '../utils';
@@ -43,6 +47,10 @@ class App extends React.Component {
         icon: !this.state.isPaused ? faPause : faPlay,
         onClick: this.onToggleClick,
         visible: () => getOption('showPause')
+      },
+      {
+        icon: faFileDownload,
+        onClick: this.onDownloadClick
       }
     ];
   }
@@ -51,14 +59,17 @@ class App extends React.Component {
     return [
       {
         i18nString: 'history',
+        icon: faHistory,
         onClick: () => this.openChromeLink('chrome://history')
       },
       {
         i18nString: 'bookmarks',
+        icon: faBookmark,
         onClick: () => this.openChromeLink('chrome://bookmarks')
       },
       {
         i18nString: 'apps',
+        icon: faRocket,
         onClick: () => this.openChromeLink('chrome://apps')
       }
     ];
@@ -126,6 +137,7 @@ class App extends React.Component {
       newIndex = works.length - 1;
     }
 
+    this.setItem('id', val.id);
     this.setItem('title', cutString(val.title, cutLength));
     this.setItem('url', `https://pixiv.moe/illust/${val.id}`);
     this.setItem(
@@ -190,6 +202,11 @@ class App extends React.Component {
       clearInterval(this.carouselTimer);
     }
     this.setState({ isPaused: !this.state.isPaused });
+  };
+
+  onDownloadClick = () => {
+    const illustId = this.getItem('id');
+    location.href = `https://api.kotori.love/pixiv/illust/${illustId}.zip`;
   };
 
   createProgressTimer = () => {
@@ -280,7 +297,11 @@ class App extends React.Component {
               {this.menuItems.map((item, index) => (
                 <li key={index}>
                   <SafeAnchor onClick={item.onClick}>
-                    {chrome.i18n.getMessage(item.i18nString)}
+                    {getOption('chromeLinkAsIcons') ? (
+                      <FontAwesomeIcon icon={item.icon} />
+                    ) : (
+                      chrome.i18n.getMessage(item.i18nString)
+                    )}
                   </SafeAnchor>
                 </li>
               ))}

@@ -36,6 +36,7 @@ export default class Options extends React.Component {
     switch (key) {
       case 'showProgress':
       case 'showPause':
+      case 'chromeLinkAsIcons':
         options[key] = event.target.checked;
         setOption(key, options[key]);
         break;
@@ -91,6 +92,21 @@ export default class Options extends React.Component {
                   />
                 }
                 label={chrome.i18n.getMessage('optionShowPause')}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={options.chromeLinkAsIcons}
+                    onChange={event =>
+                      this.onChange('chromeLinkAsIcons', event)
+                    }
+                    color="primary"
+                  />
+                }
+                label={chrome.i18n.getMessage('optionChromeLinkAsIcons')}
               />
             </FormGroup>
 

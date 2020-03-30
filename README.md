@@ -10,5 +10,10 @@ Show Pixiv daily rankings on your new tab page.
 在新标签页上显示Pixiv每日排名。  
 在新標籤頁上顯示Pixiv每日排名。  
 
+## Features
+
+* Show Pixiv daily rankings
+* Download illusts
+
 ## License
 [MIT license](http://opensource.org/licenses/mit-license.php)

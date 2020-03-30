@@ -41,6 +41,9 @@
   "optionIntervalTime": {
     "message": "カルーセル間隔（秒）"
   },
+  "optionChromeLinkAsIcons": {
+    "message": "Chromeリンクをアイコンとして表示する"
+  },
   "optionClearCache": {
     "message": "キャッシュを空にする"
   }
