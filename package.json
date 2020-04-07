@@ -27,12 +27,14 @@
     "@fortawesome/react-fontawesome": "^0.1.9",
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
-    "js-file-downloader": "^1.1.5",
+    "jszip": "^3.3.0",
+    "jszip-utils": "^0.1.0",
     "rc-align": "^3.0.0-rc.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-md-spinner": "^1.0.0",
-    "react-progress": "^0.0.12"
+    "react-progress": "^0.0.12",
+    "save-as": "^0.1.8"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",

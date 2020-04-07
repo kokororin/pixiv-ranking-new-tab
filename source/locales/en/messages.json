@@ -26,6 +26,9 @@
   "loadFailed": {
     "message": "Load Failed"
   },
+  "downloadFailed": {
+    "message": "Download Failed"
+  },
   "rankNum": {
     "message": "No. $1"
   },

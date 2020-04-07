@@ -26,6 +26,9 @@
   "loadFailed": {
     "message": "로드 실패"
   },
+  "downloadFailed": {
+    "message": "다운로드 실패"
+  },
   "rankNum": {
     "message": "$1 달러"
   },

@@ -26,6 +26,9 @@
   "loadFailed": {
     "message": "読み込みに失敗しました"
   },
+  "downloadFailed": {
+    "message": "ダウンロードに失敗しました"
+  },
   "rankNum": {
     "message": "$1位"
   },

@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Progress from 'react-progress';
 import MDSpinner from 'react-md-spinner';
-import Downloader from 'js-file-downloader';
+import JSZip from 'jszip';
+import JSZipUtils from 'jszip-utils';
+import saveAs from 'save-as';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faArrowLeft,
@@ -17,7 +19,13 @@ import {
   faSpinner
 } from '@fortawesome/free-solid-svg-icons';
 import SafeAnchor from '../components/SafeAnchor';
-import { fetchRanking, cutString, getProxyImage, getOption } from '../utils';
+import {
+  fetchRanking,
+  cutString,
+  getProxyImage,
+  getOption,
+  showNotification
+} from '../utils';
 import '../styles/main.css';
 
 class App extends React.Component {
@@ -127,6 +135,7 @@ class App extends React.Component {
     const works = this.state.response.illusts;
     const item = works[this.state.index];
     let url;
+    let urls = [];
     if (getOption('originalQuality')) {
       if (item?.meta_single_page?.original_image_url) {
         url = item.meta_single_page?.original_image_url;
@@ -139,6 +148,12 @@ class App extends React.Component {
       url = getProxyImage(url);
     } else {
       url = getProxyImage(item.image_urls.large);
+    }
+    if (item?.meta_single_page?.original_image_url) {
+      urls = [item.meta_single_page?.original_image_url];
+    }
+    if (item?.meta_pages?.length > 0) {
+      urls = item.meta_pages.map(page => page.image_urls.original);
     }
     document.body.style.backgroundImage = `url(${url})`;
     const footerWidth = this.footerRef.offsetWidth;
@@ -157,6 +172,7 @@ class App extends React.Component {
     this.setItem('id', item.id);
     this.setItem('title', cutString(item.title, cutLength));
     this.setItem('url', `https://pixiv.moe/illust/${item.id}`);
+    this.setItem('urls', urls);
     this.setItem(
       'rankNum',
       chrome.i18n.getMessage('rankNum', [this.state.index + 1])
@@ -235,11 +251,31 @@ class App extends React.Component {
     if (this.state.isDownloading) {
       return;
     }
+    const urls = this.getItem('urls');
+    const zip = new JSZip();
+    let count = 0;
     this.setState({ isDownloading: true });
-    new Downloader({
-      url: `https://api.kotori.love/pixiv/illust/${illustId}.zip`
-    }).finally(() => {
-      this.setState({ isDownloading: false });
+    urls.map(getProxyImage).forEach(url => {
+      const fileName = url.split('/').pop();
+      JSZipUtils.getBinaryContent(url, (err, data) => {
+        if (err) {
+          this.setState({ isDownloading: false });
+          showNotification({
+            title: chrome.i18n.getMessage('appName'),
+            message: chrome.i18n.getMessage('downloadFailed'),
+            iconUrl: 'logo-128.png'
+          });
+          throw err;
+        }
+        zip.file(fileName, data, { binary: true });
+        count++;
+        if (count === urls.length) {
+          zip.generateAsync({ type: 'blob' }).then(content => {
+            this.setState({ isDownloading: false });
+            saveAs(content, `pixiv_illust_${illustId}.zip`);
+          });
+        }
+      });
     });
   };
 

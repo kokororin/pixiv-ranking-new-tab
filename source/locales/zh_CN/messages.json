@@ -26,6 +26,9 @@
   "loadFailed": {
     "message": "载入失败"
   },
+  "downloadFailed": {
+    "message": "下载失败"
+  },
   "rankNum": {
     "message": "$1位"
   },
