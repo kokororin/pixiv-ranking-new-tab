@@ -125,9 +125,22 @@ class App extends React.Component {
 
   carousel = (next = true) => {
     const works = this.state.response.illusts;
-    const val = works[this.state.index];
-    document.body.style.backgroundImage =
-      'url(' + getProxyImage(val.image_urls.large) + ')';
+    const item = works[this.state.index];
+    let url;
+    if (getOption('originalQuality')) {
+      if (item?.meta_single_page?.original_image_url) {
+        url = item.meta_single_page?.original_image_url;
+      }
+      if (item?.meta_pages?.length > 0) {
+        url = item.meta_pages?.[0].image_urls.original;
+      }
+    }
+    if (url) {
+      url = getProxyImage(url);
+    } else {
+      url = getProxyImage(item.image_urls.large);
+    }
+    document.body.style.backgroundImage = `url(${url})`;
     const footerWidth = this.footerRef.offsetWidth;
     const rankWidth = this.rankRef.offsetWidth;
     const cutLength = Math.ceil(
@@ -141,9 +154,9 @@ class App extends React.Component {
       newIndex = works.length - 1;
     }
 
-    this.setItem('id', val.id);
-    this.setItem('title', cutString(val.title, cutLength));
-    this.setItem('url', `https://pixiv.moe/illust/${val.id}`);
+    this.setItem('id', item.id);
+    this.setItem('title', cutString(item.title, cutLength));
+    this.setItem('url', `https://pixiv.moe/illust/${item.id}`);
     this.setItem(
       'rankNum',
       chrome.i18n.getMessage('rankNum', [this.state.index + 1])
@@ -152,7 +165,7 @@ class App extends React.Component {
       'rankMetaText',
       <>
         <FontAwesomeIcon icon={faHeart} />
-        {val.total_bookmarks}
+        {item.total_bookmarks}
       </>
     );
 
@@ -166,13 +179,22 @@ class App extends React.Component {
   };
 
   openChromeLink(url) {
-    chrome.tabs.update({
-      url
-    });
+    if (getOption('openLinksInNewTab')) {
+      chrome.tabs.create({ url });
+    } else {
+      chrome.tabs.update({ url });
+    }
   }
 
   openLink(url) {
-    location.href = url;
+    const a = document.createElement('a');
+    a.href = url;
+    if (getOption('openLinksInNewTab')) {
+      a.target = '_blank';
+    }
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   onUpdateClick = () => {

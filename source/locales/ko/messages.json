@@ -1,0 +1,56 @@
+{
+  "appName": {
+    "message": "Pixiv Ranking New Tab"
+  },
+  "description": {
+    "message": "새 탭 페이지에 Pixiv 일일 순위를 표시하십시오."
+  },
+  "updated": {
+    "message": "순위가 업데이트되었습니다! 훌륭한 작품이 많이 있습니다!"
+  },
+  "history": {
+    "message": "역사"
+  },
+  "bookmarks": {
+    "message": "북마크"
+  },
+  "apps": {
+    "message": "앱"
+  },
+  "update": {
+    "message": "최신 정보"
+  },
+  "newTab": {
+    "message": "새로운 탭"
+  },
+  "loadFailed": {
+    "message": "로드 실패"
+  },
+  "rankNum": {
+    "message": "$1 달러"
+  },
+  "options": {
+    "message": "옵션"
+  },
+  "optionShowProgress": {
+    "message": "진행 상황 표시"
+  },
+  "optionShowPause": {
+    "message": "일시 중지 표시"
+  },
+  "optionIntervalTime": {
+    "message": "캐 러셀 간격 (초)"
+  },
+  "optionChromeLinkAsIcons": {
+    "message": "아이콘으로 Chrome 링크 표시"
+  },
+  "optionOpenLinksInNewTab": {
+    "message": "새 탭에서 링크 열기"
+  },
+  "optionOriginalQuality": {
+    "message": "원본 화질 이미지 표시"
+  },
+  "optionClearCache": {
+    "message": "캐시 비우기"
+  }
+}

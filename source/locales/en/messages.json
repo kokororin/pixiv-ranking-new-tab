@@ -44,6 +44,12 @@
   "optionChromeLinkAsIcons": {
     "message": "Show Chrome links as icons"
   },
+  "optionOpenLinksInNewTab": {
+    "message": "Open links in new Tab"
+  },
+  "optionOriginalQuality": {
+    "message": "Show original quality image"
+  },
   "optionClearCache": {
     "message": "Empty the cache"
   }

@@ -37,6 +37,8 @@ export default class Options extends React.Component {
       case 'showProgress':
       case 'showPause':
       case 'chromeLinkAsIcons':
+      case 'openLinksInNewTab':
+      case 'originalQuality':
         options[key] = event.target.checked;
         setOption(key, options[key]);
         break;
@@ -107,6 +109,34 @@ export default class Options extends React.Component {
                   />
                 }
                 label={chrome.i18n.getMessage('optionChromeLinkAsIcons')}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={options.openLinksInNewTab}
+                    onChange={event =>
+                      this.onChange('openLinksInNewTab', event)
+                    }
+                    color="primary"
+                  />
+                }
+                label={chrome.i18n.getMessage('optionOpenLinksInNewTab')}
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={options.originalQuality}
+                    onChange={event => this.onChange('originalQuality', event)}
+                    color="primary"
+                  />
+                }
+                label={chrome.i18n.getMessage('optionOriginalQuality')}
               />
             </FormGroup>
 

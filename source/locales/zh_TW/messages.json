@@ -44,6 +44,12 @@
   "optionChromeLinkAsIcons": {
     "message": "以圖標形式展示 Chrome 鏈接"
   },
+  "optionOpenLinksInNewTab": {
+    "message": "在新標籤頁中打開鏈接"
+  },
+  "optionOriginalQuality": {
+    "message": "顯示原始質量圖像"
+  },
   "optionClearCache": {
     "message": "清空緩存"
   }

@@ -44,6 +44,12 @@
   "optionChromeLinkAsIcons": {
     "message": "Chromeリンクをアイコンとして表示する"
   },
+  "optionOpenLinksInNewTab": {
+    "message": "新しいタブでリンクを開く"
+  },
+  "optionOriginalQuality": {
+    "message": "元の品質の画像を表示"
+  },
   "optionClearCache": {
     "message": "キャッシュを空にする"
   }
