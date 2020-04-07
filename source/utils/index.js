@@ -58,7 +58,7 @@ export function cutString(str, len) {
 export function getProxyImage(url) {
   const regex = /^http?s:\/\/i\.pximg\.net/i;
   if (regex.test(url)) {
-    return `https://i.pixiv.cat${url.replace(regex, '')}`;
+    return `https://api.kotori.love/pixiv/image/${url.replace(/^http?s:\/\//, '')}`;
   }
   return url;
 }
