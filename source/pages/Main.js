@@ -116,7 +116,7 @@ class App extends React.Component {
     if (o.status >= 200 && o.status < 400) {
       const data = JSON.parse(o.responseText);
 
-      if (data.status === 'success') {
+      if (data.code === 200) {
         this.setState({ response: data.response }, () => {
           this.carousel();
           this.carouselTimer = setInterval(

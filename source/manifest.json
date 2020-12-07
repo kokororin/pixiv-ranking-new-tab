@@ -17,7 +17,7 @@
   },
   "manifest_version": 2,
   "name": "__MSG_appName__",
-  "permissions": ["tabs", "notifications", "https://api.kotori.love/"],
+  "permissions": ["tabs", "notifications", "https://api.pixiv.moe/"],
   "options_ui": {
     "page": "options.html",
     "open_in_tab": false

@@ -1,11 +1,7 @@
-export function fetchRanking() {
+export function session() {
   return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
-    request.open(
-      'GET',
-      'https://api.kotori.love/pixiv/ranking?source=extension',
-      true
-    );
+    request.open('GET', 'https://api.pixiv.moe/session', true);
     request.onload = () => {
       resolve(request);
     };
@@ -13,6 +9,37 @@ export function fetchRanking() {
       reject();
     };
     request.send();
+  });
+}
+
+export function fetchRanking() {
+  return new Promise((resolve, reject) => {
+    session().then(resp => {
+      if (resp.status >= 200 && resp.status < 400) {
+        const sessionData = JSON.parse(resp.responseText);
+        if (sessionData.code === 200) {
+          const request = new XMLHttpRequest();
+          request.open(
+            'GET',
+            'https://api.pixiv.moe/ranking?source=extension',
+            true
+          );
+          request.setRequestHeader(
+            'X-Kotori-Token',
+            sessionData.response.access_token
+          );
+          request.onload = () => {
+            resolve(request);
+          };
+          request.onerror = () => {
+            reject();
+          };
+          request.send();
+        } else {
+          reject();
+        }
+      }
+    });
   });
 }
 
@@ -58,7 +85,7 @@ export function cutString(str, len) {
 export function getProxyImage(url) {
   const regex = /^http?s:\/\/i\.pximg\.net/i;
   if (regex.test(url)) {
-    return `https://api.kotori.love/pixiv/image/${url.replace(/^http?s:\/\//, '')}`;
+    return `https://api.pixiv.moe/image/${url.replace(/^http?s:\/\//, '')}`;
   }
   return url;
 }

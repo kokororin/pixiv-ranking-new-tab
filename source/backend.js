@@ -19,7 +19,7 @@ const backgroundFetch = () => {
     } catch (err) {
       data = { response: { illusts: [] } };
     }
-    if (data.status === 'success') {
+    if (data.code === 200) {
       let oldRanking = localStorage.getItem('ranking') || {
         response: { illusts: [] }
       };
