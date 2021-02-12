@@ -21,7 +21,7 @@ export function fetchRanking() {
           const request = new XMLHttpRequest();
           request.open(
             'GET',
-            'https://api.pixiv.moe/ranking?source=extension',
+            'https://api.pixiv.moe/v2/ranking?source=extension',
             true
           );
           request.setRequestHeader(
