@@ -83,9 +83,19 @@ export function cutString(str, len) {
 }
 
 export function getProxyImage(url) {
-  const regex = /^http?s:\/\/i\.pximg\.net/i;
+  if (!url) {
+    return url;
+  }
+  const regex = /^https?:\/\/(i\.pximg\.net)|(source\.pixiv\.net)/i;
   if (regex.test(url)) {
-    return `https://api.pixiv.moe/image/${url.replace(/^http?s:\/\//, '')}`;
+    url = `https://api.pixiv.moe/image/${url.replace(/^https?:\/\//, '')}`;
+  }
+  if (
+    url.indexOf('.png') > -1 ||
+    url.indexOf('.jpg') > -1 ||
+    url.indexOf('.jpeg') > -1
+  ) {
+    url = `${url}@progressive.webp`;
   }
   return url;
 }
