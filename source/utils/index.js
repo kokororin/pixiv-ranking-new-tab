@@ -25,8 +25,8 @@ export function fetchRanking() {
             true
           );
           request.setRequestHeader(
-            'X-Kotori-Token',
-            sessionData.response.access_token
+            'Authorization',
+            `Uid ${sessionData.response.access_token}`
           );
           request.onload = () => {
             resolve(request);
