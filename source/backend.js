@@ -1,4 +1,4 @@
-import { fetchRanking } from './utils';
+import { fetchRanking, showNotification } from './utils';
 
 chrome.browserAction.onClicked.addListener(() => {
   chrome.tabs.create({ url: 'https://pixiv.moe/?entry=ranking' });
@@ -35,6 +35,11 @@ function backgroundFetch(ignoreCache = false) {
 
         if (oldIds?.join(',') !== newIds?.join(',')) {
           localStorage.setItem('ranking', JSON.stringify(data));
+          showNotification({
+            title: chrome.i18n.getMessage('appName'),
+            message: chrome.i18n.getMessage('updated'),
+            iconUrl: 'logo-128.png'
+          });
         }
 
         resolve(data);

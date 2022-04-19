@@ -6,6 +6,9 @@ export function fetchRanking() {
 
 export function showNotification(opt, time = 5000) {
   opt.type = opt.type || 'basic';
+  opt.title = opt.title || chrome.i18n.getMessage('appName');
+  opt.iconUrl = opt.iconUrl || 'logo-128.png';
+
   chrome.notifications.clear('notifyId');
   const notification = chrome.notifications.create(
     'notifyId',

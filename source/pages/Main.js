@@ -257,9 +257,7 @@ class App extends React.Component {
         if (err) {
           this.setState({ isDownloading: false });
           showNotification({
-            title: chrome.i18n.getMessage('appName'),
-            message: chrome.i18n.getMessage('downloadFailed'),
-            iconUrl: 'logo-128.png'
+            message: chrome.i18n.getMessage('downloadFailed')
           });
           throw err;
         }
