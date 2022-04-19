@@ -1,46 +1,7 @@
-export function session() {
-  return new Promise((resolve, reject) => {
-    const request = new XMLHttpRequest();
-    request.open('GET', 'https://api.pixiv.moe/session', true);
-    request.onload = () => {
-      resolve(request);
-    };
-    request.onerror = () => {
-      reject();
-    };
-    request.send();
-  });
-}
-
 export function fetchRanking() {
-  return new Promise((resolve, reject) => {
-    session().then(resp => {
-      if (resp.status >= 200 && resp.status < 400) {
-        const sessionData = JSON.parse(resp.responseText);
-        if (sessionData.code === 200) {
-          const request = new XMLHttpRequest();
-          request.open(
-            'GET',
-            'https://api.pixiv.moe/v2/ranking?source=extension',
-            true
-          );
-          request.setRequestHeader(
-            'Authorization',
-            `Uid ${sessionData.response.access_token}`
-          );
-          request.onload = () => {
-            resolve(request);
-          };
-          request.onerror = () => {
-            reject();
-          };
-          request.send();
-        } else {
-          reject();
-        }
-      }
-    });
-  });
+  return fetch('https://api.pixiv.moe/v2/ranking?source=extension').then(r =>
+    r.json()
+  );
 }
 
 export function showNotification(opt, time = 5000) {

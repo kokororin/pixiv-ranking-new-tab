@@ -20,7 +20,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import SafeAnchor from '../components/SafeAnchor';
 import {
-  fetchRanking,
   cutString,
   getProxyImage,
   getOption,
@@ -89,43 +88,40 @@ class App extends React.Component {
 
   componentDidMount() {
     document.title = chrome.i18n.getMessage('newTab');
-    const data = localStorage.getItem('ranking');
-    if (!data) {
-      fetchRanking()
-        .then(request => {
-          this.processResponse(request);
-        })
-        .catch(err => {
-          console.error(err);
-          this.setError();
-        })
-        .finally(() => {
-          this.setState({ isLoading: false });
-        });
-    } else {
-      this.setState({ isLoading: false });
-      const cachedRequest = {
-        status: 200,
-        responseText: data
-      };
-      this.processResponse(cachedRequest);
-    }
+    const bg = chrome.extension.getBackgroundPage();
+    bg.$backgroundFetch()
+      .then(data => {
+        this.processData(data);
+      })
+      .catch(err => {
+        console.error(err);
+        this.setError();
+      })
+      .finally(() => {
+        this.setState({ isLoading: false });
+      });
   }
 
-  processResponse(o) {
-    if (o.status >= 200 && o.status < 400) {
-      const data = JSON.parse(o.responseText);
-
-      if (data.code === 200) {
-        this.setState({ response: data.response }, () => {
-          this.carousel();
-          this.carouselTimer = setInterval(
-            this.carousel,
-            getOption('intervalTime')
-          );
-        });
-        localStorage.setItem('ranking', o.responseText);
+  processData(data) {
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (err) {
+        data = {
+          code: 400
+        };
       }
+    }
+
+    if (data.code === 200) {
+      this.setState({ response: data.response }, () => {
+        this.carousel();
+        this.carouselTimer = setInterval(
+          this.carousel,
+          getOption('intervalTime')
+        );
+      });
+      localStorage.setItem('ranking', JSON.stringify(data));
     } else {
       this.setError();
     }
@@ -272,7 +268,7 @@ class App extends React.Component {
         if (count === urls.length) {
           zip.generateAsync({ type: 'blob' }).then(content => {
             this.setState({ isDownloading: false });
-            saveAs(content, `pixiv_illust_${illustId}.zip`);
+            saveAs(content, `pid-${illustId}.zip`);
           });
         }
       });
@@ -346,21 +342,23 @@ class App extends React.Component {
   render() {
     return (
       <>
-        <div className="top left">
-          <div className="top-menu">
-            <ul className="nav navbar-nav navbar-right">
-              {this.actionItems
-                .filter(item => !item.visible || item.visible())
-                .map((item, index) => (
-                  <li key={index}>
-                    <SafeAnchor onClick={item.onClick}>
-                      <FontAwesomeIcon icon={item.icon} {...item.iconProps} />
-                    </SafeAnchor>
-                  </li>
-                ))}
-            </ul>
+        {(!this.state.isLoading || !this.state.isError) && (
+          <div className="top left">
+            <div className="top-menu">
+              <ul className="nav navbar-nav navbar-right">
+                {this.actionItems
+                  .filter(item => !item.visible || item.visible())
+                  .map((item, index) => (
+                    <li key={index}>
+                      <SafeAnchor onClick={item.onClick}>
+                        <FontAwesomeIcon icon={item.icon} {...item.iconProps} />
+                      </SafeAnchor>
+                    </li>
+                  ))}
+              </ul>
+            </div>
           </div>
-        </div>
+        )}
         <div className="top right">
           <div className="top-menu">
             <ul className="nav navbar-nav navbar-right">

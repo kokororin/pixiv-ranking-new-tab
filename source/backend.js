@@ -11,38 +11,44 @@ if (previousVersion !== manifest.version) {
   localStorage.setItem('version', manifest.version);
 }
 
-const backgroundFetch = () => {
-  fetchRanking().then(response => {
-    let data = {};
-    try {
-      data = JSON.parse(response.responseText);
-    } catch (err) {
-      data = { response: { illusts: [] } };
-    }
-    if (data.code === 200) {
-      let oldRanking = localStorage.getItem('ranking') || {
-        response: { illusts: [] }
-      };
-      try {
-        oldRanking = JSON.parse(localStorage.getItem('ranking'));
-      } catch (err) {}
-      const oldIds = oldRanking?.response?.illusts.map(item => item.id);
-      const newIds = data?.response?.illusts.map(item => item.id);
+function backgroundFetch(ignoreCache = false) {
+  let oldRanking = localStorage.getItem('ranking') || {
+    code: 400
+  };
+  try {
+    oldRanking = JSON.parse(oldRanking);
+  } catch (err) {}
 
-      if (oldIds.join(',') !== newIds.join(',')) {
-        localStorage.setItem('ranking', response.responseText);
-        // showNotification({
-        //   title: chrome.i18n.getMessage('appName'),
-        //   message: chrome.i18n.getMessage('updated'),
-        //   iconUrl: 'logo-128.png'
-        // });
+  if (oldRanking.code === 200 && !ignoreCache) {
+    return Promise.resolve(oldRanking);
+  }
+
+  return new Promise((resolve, reject) => {
+    fetchRanking().then(data => {
+      if (!data) {
+        data = { response: { illusts: [] } };
       }
-    }
-  });
-};
 
-backgroundFetch();
+      if (data.code === 200) {
+        const oldIds = oldRanking?.response?.illusts.map(item => item.id);
+        const newIds = data?.response?.illusts.map(item => item.id);
+
+        if (oldIds?.join(',') !== newIds?.join(',')) {
+          localStorage.setItem('ranking', JSON.stringify(data));
+        }
+
+        resolve(data);
+      } else {
+        reject();
+      }
+    });
+  });
+}
+
+backgroundFetch(true);
 
 setInterval(() => {
-  backgroundFetch();
+  backgroundFetch(true);
 }, 1000 * 60 * 10);
+
+window.$backgroundFetch = backgroundFetch;
