@@ -30,10 +30,10 @@ function backgroundFetch(ignoreCache = false) {
       }
 
       if (data.code === 200) {
-        const oldIds = oldRanking?.response?.illusts.map(item => item.id);
-        const newIds = data?.response?.illusts.map(item => item.id);
+        const oldDate = oldRanking?.response?.date;
+        const newDate = data?.response?.date;
 
-        if (oldIds?.join(',') !== newIds?.join(',')) {
+        if (oldDate !== newDate) {
           localStorage.setItem('ranking', JSON.stringify(data));
           showNotification({
             title: chrome.i18n.getMessage('appName'),
