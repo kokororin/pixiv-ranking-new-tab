@@ -1,8 +1,8 @@
-/* eslint-disable prefer-arrow-callback */
 const path = require('path');
 const fs = require('fs');
 const archiver = require('archiver');
 const webpack = require('webpack');
+const { ESBuildMinifyPlugin } = require('esbuild-loader');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
@@ -19,15 +19,19 @@ const config = {
   },
   resolve: { extensions: ['.js'] },
   module: {
+    strictExportPresence: false,
     rules: [
       {
         test: /\.css$/,
-        loader: 'style-loader!css-loader'
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        exclude: /(node_modules|bower_components)/
+        loader: 'esbuild-loader',
+        options: {
+          loader: 'jsx', // Remove this if you're not using JSX
+          target: 'es2015' // Syntax to compile to (see options below for possible values)
+        }
       },
       {
         test: /\.(png|jpg|gif|woff|woff2|ttf|svg|eot)(\?|\?[a-z0-9]+)?$/,
@@ -44,34 +48,43 @@ const config = {
   },
   plugins: [
     new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new CopyWebpackPlugin([
-      {
-        from: 'source/locales',
-        to: '_locales'
-      },
-      {
-        from: 'source/manifest.json'
-      },
-      {
-        from: 'source/html'
-      },
-      {
-        from: 'source/icons'
-      }
-    ]),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'source/locales',
+          to: '_locales'
+        },
+        {
+          from: 'source/manifest.json'
+        },
+        {
+          from: 'source/html'
+        },
+        {
+          from: 'source/icons'
+        }
+      ]
+    }),
     new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
     new webpack.BannerPlugin({
       banner: `
 ${fs.readFileSync(path.join(__dirname, 'LICENSE')).toString()}
 `
     })
-  ]
+  ],
+  optimization: {
+    minimize: process.env.NODE_ENV === 'production',
+    minimizer: [
+      new ESBuildMinifyPlugin({
+        target: 'es2015' // Syntax to compile to (see options below for possible values)
+      })
+    ]
+  }
 };
 
 if (process.env.NODE_ENV === 'production') {
-  config.plugins.push(function() {
-    this.plugin('done', function() {
+  config.plugins.push(function () {
+    this.hooks.done.tapPromise('custom-zip-plugin', async () => {
       const fileName = path.join(__dirname, 'extension.zip');
       if (fs.existsSync(fileName)) {
         fs.unlinkSync(fileName);
@@ -81,6 +94,7 @@ if (process.env.NODE_ENV === 'production') {
       archive.pipe(output);
       archive.directory('extension/', false);
       archive.finalize();
+      return Promise.resolve();
     });
   });
 }

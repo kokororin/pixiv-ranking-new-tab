@@ -89,17 +89,22 @@ class App extends React.Component {
   componentDidMount() {
     document.title = chrome.i18n.getMessage('newTab');
     const bg = chrome.extension.getBackgroundPage();
-    bg.$backgroundFetch()
-      .then(data => {
-        this.processData(data);
-      })
-      .catch(err => {
-        console.error(err);
-        this.setError();
-      })
-      .finally(() => {
-        this.setState({ isLoading: false });
-      });
+    const t = setInterval(() => {
+      if (bg.$backgroundFetch) {
+        bg.$backgroundFetch()
+          .then(data => {
+            this.processData(data);
+          })
+          .catch(err => {
+            console.error(err);
+            this.setError();
+          })
+          .finally(() => {
+            this.setState({ isLoading: false });
+          });
+        clearInterval(t);
+      }
+    }, 20);
   }
 
   processData(data) {

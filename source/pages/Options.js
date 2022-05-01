@@ -9,12 +9,12 @@ import {
   Select,
   MenuItem,
   Button
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   GitHub as GithubIcon,
   Twitter as TwitterIcon,
   Cached as CachedIcon
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 import { getOption, setOption } from '../utils';
 import '../styles/options.css';
 
@@ -141,7 +141,7 @@ export default class Options extends React.Component {
             </FormGroup>
 
             <FormGroup>
-              <FormControl>
+              <FormControl variant="standard">
                 <InputLabel shrink id="intervalTime-label-label">
                   {chrome.i18n.getMessage('optionIntervalTime')}
                 </InputLabel>
