@@ -1,9 +1,5 @@
 import { fetchRanking, showNotification } from './utils';
 
-chrome.browserAction.onClicked.addListener(() => {
-  chrome.tabs.create({ url: 'https://pixiv.moe/?entry=ranking' });
-});
-
 const manifest = chrome.runtime.getManifest();
 const previousVersion = localStorage.getItem('version');
 if (previousVersion !== manifest.version) {
