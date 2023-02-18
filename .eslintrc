@@ -4,5 +4,8 @@
   ],
   "globals": {
     "chrome": true
+  },
+  "rules": {
+    "linebreak-style": "off"
   }
 }

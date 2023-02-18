@@ -1,5 +1,9 @@
 export function fetchRanking() {
-  return fetch('https://api.pixiv.moe/v2/ranking?source=extension').then(r =>
+  return fetch('https://api.pixiv.moe/v2/ranking?source=extension', {
+    headers: {
+      'X-Chrome-Extension-Id': chrome.runtime.id
+    }
+  }).then(r =>
     r.json()
   );
 }
@@ -50,8 +54,14 @@ export function getProxyImage(url) {
   if (!url) {
     return url;
   }
-  const regex = /^https?:\/\/(i\.pximg\.net)|(source\.pixiv\.net)/i;
-  if (regex.test(url)) {
+  const regex = [
+    /^https?:\/\/(i\.pximg\.net)/i,
+    /^https?:\/\/(source\.pixiv\.net)/i
+  ];
+  if (regex[0].test(url)) {
+    url = `https://api.pixiv.moe/image/i${url.replace(regex[0], '')}`;
+  }
+  if (regex[1].test(url)) {
     url = `https://api.pixiv.moe/image/${url.replace(/^https?:\/\//, '')}`;
   }
   if (
